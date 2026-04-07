@@ -1,31 +1,84 @@
 /**
  * 数据获取服务
  * 负责从各个数据源获取AI相关新闻
- * 
- * 注意：本demo使用mock数据演示，实际项目中需要实现真实的API调用
+ * 支持真实数据源：Hacker News, Reddit, RSS, arXiv
  */
 
 import type { RawNewsItem, DataSource } from '../../types/index.js';
+import { HackerNewsSource } from './sources/hackernews.js';
+import { RedditSource, AI_SUBREDDITS } from './sources/reddit.js';
+import { RSSSource, RSS_SOURCES } from './sources/rss.js';
+import { ArxivSource } from './sources/arxiv.js';
 
 export class DataFetcherService {
+  private hnSource = new HackerNewsSource();
+  private redditSource = new RedditSource();
+  private rssSource = new RSSSource();
+  private arxivSource = new ArxivSource();
+  
   /**
-   * 获取新闻数据
-   * 
-   * TODO: 实现真实的数据源调用
-   * - Hacker News API
-   * - Reddit API
-   * - RSS Parser
-   * - arXiv API
+   * 获取新闻数据（真实数据源）
    */
   async fetchNews(date: Date, sources: DataSource[]): Promise<RawNewsItem[]> {
     console.log(`[DataFetcher] 开始获取数据，日期: ${date.toISOString().split('T')[0]}`);
     console.log(`[DataFetcher] 数据源: ${sources.map(s => s.name).join(', ')}`);
     
-    // 使用mock数据演示
-    const mockData = this.getMockData();
+    const allNews: RawNewsItem[] = [];
     
-    console.log(`[DataFetcher] 获取到 ${mockData.length} 条原始数据`);
-    return mockData;
+    // 并行获取所有数据源
+    const promises: Promise<RawNewsItem[]>[] = [];
+    
+    // Hacker News
+    if (sources.some(s => s.name.toLowerCase().includes('hacker'))) {
+      promises.push(this.hnSource.fetchNews(30));
+    }
+    
+    // Reddit
+    if (sources.some(s => s.name.toLowerCase().includes('reddit'))) {
+      promises.push(this.redditSource.fetchMultiple(AI_SUBREDDITS, 10));
+    }
+    
+    // RSS
+    if (sources.some(s => s.name.toLowerCase().includes('rss') || s.name.toLowerCase().includes('tech'))) {
+      for (const rssSource of RSS_SOURCES) {
+        promises.push(this.rssSource.fetchNews(rssSource.url, rssSource.name));
+      }
+    }
+    
+    // arXiv
+    if (sources.some(s => s.name.toLowerCase().includes('arxiv') || s.name.toLowerCase().includes('academic'))) {
+      promises.push(this.arxivSource.fetchNews(20));
+    }
+    
+    // 如果没有匹配的数据源，使用所有数据源
+    if (promises.length === 0) {
+      console.log('[DataFetcher] 未指定数据源，使用所有可用数据源');
+      promises.push(
+        this.hnSource.fetchNews(30),
+        this.redditSource.fetchMultiple(AI_SUBREDDITS.slice(0, 3), 10),
+        this.arxivSource.fetchNews(20)
+      );
+      
+      // 添加部分RSS源
+      for (const rssSource of RSS_SOURCES.slice(0, 3)) {
+        promises.push(this.rssSource.fetchNews(rssSource.url, rssSource.name));
+      }
+    }
+    
+    // 等待所有数据源完成
+    const results = await Promise.allSettled(promises);
+    
+    // 收集成功的结果
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        allNews.push(...result.value);
+      } else {
+        console.error(`[DataFetcher] 数据源 ${index} 获取失败:`, result.reason);
+      }
+    });
+    
+    console.log(`[DataFetcher] 获取到 ${allNews.length} 条原始数据`);
+    return allNews;
   }
   
   /**

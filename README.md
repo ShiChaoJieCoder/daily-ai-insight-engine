@@ -11,13 +11,23 @@
 
 本系统是一个**AI驱动的舆情分析日报生成系统**，专注于AI行业的信息分析。通过自动化采集、AI处理和可视化展示，将分散的新闻信息转化为结构化洞察和专业报告。
 
-### 核心功能
+### ✨ v2.0 核心功能
 
-- 🔄 **自动化数据采集**：从多个数据源（Hacker News、Reddit、TechCrunch等）获取AI相关新闻
-- 🤖 **AI智能分析**：使用GPT-3.5/GPT-4进行信息提取、情感分析、影响评估
+- 🌐 **真实数据源集成**：从Hacker News、Reddit、RSS、arXiv等多个平台获取真实AI资讯
+- 🤖 **双模式AI分析**：
+  - **OpenAI模式**：GPT-3.5/4深度分析（高质量）
+  - **规则引擎模式**：NLP算法分析（零成本，无需API Key）
+- 🔄 **自动降级机制**：API失败时自动切换到规则引擎，确保系统可用性
 - 📊 **多维度可视化**：图表展示事件分布、情感趋势、热门话题
 - 📝 **专业报告生成**：自动生成包含热点分析、趋势判断的日报
-- 🌐 **中英文切换**：一键切换界面语言，支持简体中文和英文
+- 🌏 **完整双语支持**：中英文内容级双语（非仅UI翻译）
+
+### 🎯 核心优势
+
+- ✅ **零配置运行**：即使没有OpenAI API Key也能正常工作
+- ✅ **完全免费**：规则引擎模式无任何API成本
+- ✅ **真实数据**：每日自动拉取最新AI资讯，无需人工干预
+- ✅ **高可用性**：多数据源并行获取，单点失败不影响整体
 
 ### 应用场景
 
@@ -25,6 +35,7 @@
 - 舆情监测与风险预警
 - 信息快速理解与决策辅助
 - 投资研究参考
+- 技术动态跟踪
 
 ---
 
@@ -43,9 +54,16 @@
 
 **后端**
 - Node.js 20.x + TypeScript 5.x
-- Express/Fastify（Web框架）
-- OpenAI API（AI处理）
-- RSS Parser（数据获取）
+- Express（Web框架）
+- OpenAI API（可选，AI深度分析）
+- Natural + Sentiment（规则引擎，NLP分析）
+- Axios + RSS Parser（数据获取）
+
+**数据源**
+- Hacker News API（技术社区）
+- Reddit JSON API（社区讨论）
+- RSS Feeds（TechCrunch, The Verge, MIT Tech Review等）
+- arXiv API（学术论文）
 
 **数据存储**
 - JSON文件系统
@@ -124,8 +142,8 @@ daily-ai-insight-engine/
 ### 环境要求
 
 - Node.js >= 20.x
-- Yarn >= 4.x
-- OpenAI API Key（或其他AI服务）
+- Yarn >= 1.22.x
+- OpenAI API Key（**可选**，规则引擎模式无需API Key）
 
 ### 安装步骤
 
@@ -157,18 +175,16 @@ cp config/.env.example config/.env
 ```
 
 ```env
-# OpenAI配置
-OPENAI_API_KEY=your_openai_api_key_here
-OPENAI_ORG_ID=your_org_id_here
-
-# 数据源配置
-HACKERNEWS_API_URL=https://hacker-news.firebaseio.com/v0
-REDDIT_API_URL=https://www.reddit.com
+# OpenAI配置（可选，不配置则自动使用规则引擎）
+OPENAI_API_KEY=your_openai_api_key_here  # 可选
+OPENAI_ORG_ID=your_org_id_here           # 可选
 
 # 服务配置
 PORT=3000
 NODE_ENV=development
 ```
+
+> 💡 **无需OpenAI API Key也能运行！** 系统会自动检测，如果没有配置API Key，将使用内置的规则引擎进行分析。
 
 4. **启动服务**
 
@@ -194,23 +210,32 @@ yarn dev:web
 
 ### 生成日报
 
-#### 方式1：通过API
+#### 方式1：通过脚本（推荐）
 
 ```bash
-curl -X POST http://localhost:3000/api/reports/generate \
-  -H "Content-Type: application/json" \
-  -d '{"date": "2026-04-07"}'
+# 生成中文报告
+cd backend
+node dist/scripts/generate-report.js --lang=zh
+
+# 生成英文报告
+node dist/scripts/generate-report.js --lang=en
+
+# 或使用yarn命令（在根目录）
+yarn generate-report
 ```
 
-#### 方式2：通过脚本
+#### 方式2：通过API
 
 ```bash
-# 在根目录执行
-yarn generate-report --date=2026-04-07
+# 生成中文报告
+curl -X POST http://localhost:3000/api/reports/generate \
+  -H "Content-Type: application/json" \
+  -d '{"date": "2026-04-07", "lang": "zh"}'
 
-# 或者在 backend 目录执行
-cd backend
-yarn generate-report --date=2026-04-07
+# 生成英文报告
+curl -X POST http://localhost:3000/api/reports/generate \
+  -H "Content-Type: application/json" \
+  -d '{"date": "2026-04-07", "lang": "en"}'
 ```
 
 #### 方式3：通过前端界面
@@ -223,54 +248,143 @@ yarn generate-report --date=2026-04-07
 ### 查看报告
 
 - **Web界面**：http://localhost:5173/reports/latest
-- **JSON数据**：`backend/data/reports/2026-04-07-report.json`
-- **Markdown报告**：`backend/data/reports/2026-04-07-report.md`
+- **JSON数据**：`backend/data/reports/2026-04-07-report-cn.json` (中文) / `-en.json` (英文)
+- **Markdown报告**：`backend/data/reports/2026-04-07-report-cn.md` (中文) / `-en.md` (英文)
 
 ---
 
-## 🤖 AI使用说明
+## 🌐 数据源说明（v2.0新增）
 
-### AI在系统中的应用
+系统从多个公开平台自动获取真实AI资讯：
 
-本系统在以下环节使用AI技术：
+### 支持的数据源
 
-| 环节 | AI模型 | 用途 | 成本占比 |
-|-----|--------|------|---------|
-| **信息提取** | GPT-3.5-turbo | 分类、标签、实体识别 | ~40% |
-| **深度分析** | GPT-4 | 情感分析、影响评估、趋势判断 | ~60% |
-| **报告生成** | GPT-4 | 生成分析报告文本 | 包含在深度分析中 |
+| 数据源 | 类型 | API | 内容特点 | 更新频率 |
+|--------|------|-----|---------|---------|
+| **Hacker News** | 技术社区 | [Firebase API](https://github.com/HackerNews/API) | 技术讨论、深度分析 | 实时 |
+| **Reddit** | 社区论坛 | 公开JSON API | 多样化观点、社区反馈 | 实时 |
+| **TechCrunch** | 科技媒体 | RSS Feed | 产品发布、融资新闻 | 每小时 |
+| **The Verge** | 科技媒体 | RSS Feed | 行业动态、深度报道 | 每小时 |
+| **MIT Tech Review** | 学术媒体 | RSS Feed | 技术趋势、研究进展 | 每日 |
+| **VentureBeat** | 商业媒体 | RSS Feed | 商业分析、市场动态 | 每小时 |
+| **arXiv** | 学术论文 | [XML API](https://info.arxiv.org/help/api/) | 最新研究论文 | 每日 |
 
-### Prompt设计思路
+### Reddit子版块
 
-我们采用**分层处理**策略：
+系统监控以下7个AI相关subreddit：
 
-1. **第一层：基础提取**（轻量模型）
-   - 批处理：5-10条新闻一起处理
+- `r/MachineLearning` - 机器学习
+- `r/artificial` - 人工智能
+- `r/deeplearning` - 深度学习
+- `r/LanguageTechnology` - 自然语言处理
+- `r/computervision` - 计算机视觉
+- `r/OpenAI` - OpenAI相关
+- `r/LocalLLaMA` - 本地大模型
+
+### 数据获取流程
+
+```
+1. 并行请求所有数据源 (Promise.allSettled)
+   ↓
+2. 智能过滤（只保留AI相关内容）
+   ↓
+3. 数据清洗（去除HTML、标准化格式）
+   ↓
+4. 去重（URL + 标题相似度）
+   ↓
+5. 统一格式（RawNewsItem接口）
+```
+
+### 容错机制
+
+- ✅ 单个数据源失败不影响其他源
+- ✅ 网络超时自动跳过（10秒超时）
+- ✅ 至少保证部分数据可用
+- ✅ 详细日志记录失败原因
+
+### 实际测试结果（2026-04-07）
+
+```
+成功获取：93条真实数据
+- Reddit: 63条 ✅
+- TechCrunch: 20条 ✅
+- The Verge: 10条 ✅
+- Hacker News: 超时 ⚠️
+- arXiv: 超时 ⚠️
+- 其他RSS: 部分超时 ⚠️
+
+处理时间：~5秒（数据获取）+ ~2秒（规则引擎分析）
+```
+
+---
+
+## 🤖 AI处理说明
+
+### 双模式架构
+
+系统支持两种AI处理模式，可根据需求选择：
+
+| 模式 | 技术 | 优势 | 劣势 | 适用场景 |
+|------|------|------|------|---------|
+| **规则引擎** | Natural + Sentiment | ✅ 完全免费<br>✅ 无需API Key<br>✅ 速度快（~2秒） | ⚠️ 分析深度有限 | 日常使用、成本敏感 |
+| **OpenAI** | GPT-3.5 + GPT-4 | ✅ 分析质量高<br>✅ 理解能力强 | ⚠️ 需要API Key<br>⚠️ 有成本（~$0.50/次） | 深度分析、专业报告 |
+
+### 规则引擎模式（v2.0新增）
+
+**核心能力**:
+- 关键词提取（TF-IDF算法）
+- 自动分类（正则匹配）
+- 实体识别（预定义词典）
+- 情感分析（sentiment库）
+- 事件类型检测
+- 重要性评分
+
+**技术栈**:
+```json
+{
+  "natural": "^8.1.1",      // NLP工具包
+  "sentiment": "^5.0.2",    // 情感分析
+  "cheerio": "^1.2.0"       // HTML处理
+}
+```
+
+**使用方式**:
+- 自动模式：系统检测到没有OpenAI API Key时自动启用
+- 手动模式：在配置中设置 `USE_RULE_ENGINE=true`
+
+### OpenAI模式
+
+**分层处理策略**:
+
+1. **第一层：基础提取**（GPT-3.5-turbo）
+   - 批处理：5条新闻/批
    - 提取：分类、标签、实体
-   - 成本低、速度快
+   - 成本：~$0.02/批
 
-2. **第二层：深度分析**（强模型）
-   - 基于结构化数据进行分析
-   - 避免重复处理原文
-   - 提供推理依据
+2. **第二层：深度分析**（GPT-4）
+   - 情感分析、影响评估
+   - 趋势判断、洞察生成
+   - 成本：~$0.12/次
 
-详细Prompt设计请参考：[Prompt设计文档](./docs/ai-usage/01-prompt-design.md)
+### 自动降级机制
 
-### 错误处理机制
+```typescript
+try {
+  // 尝试使用OpenAI API
+  return await this.callOpenAI(...);
+} catch (error) {
+  // API失败，自动回退到规则引擎
+  console.log('[AI] API失败，回退到规则引擎');
+  return ruleAnalyzer.extractBasicInfo(items);
+}
+```
 
-- **格式验证**：确保AI返回正确的JSON格式
-- **逻辑校验**：验证数值范围、枚举值
-- **重试策略**：最多重试3次，指数退避
-- **降级策略**：AI失败时使用规则提取兜底
+### 成本对比（93条新闻）
 
-详细错误处理请参考：[错误处理文档](./docs/ai-usage/02-error-handling.md)
-
-### 成本分析
-
-以20条新闻为例：
-
-- **基础提取**：~$0.02（GPT-3.5，批处理）
-- **深度分析**：~$0.12（GPT-4，聚合分析）
+| 模式 | 处理时间 | 成本 | 质量 |
+|------|---------|------|------|
+| 规则引擎 | ~2秒 | $0 | ⭐⭐⭐ |
+| OpenAI | ~80秒 | ~$0.50 | ⭐⭐⭐⭐⭐ |
 - **报告生成**：~$0.18（GPT-4）
 - **总成本**：~$0.32 / 日报
 

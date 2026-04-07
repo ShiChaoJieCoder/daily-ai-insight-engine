@@ -9,6 +9,7 @@ import { dataFetcher } from './services/data-fetcher/index.js';
 import { aiProcessor } from './services/ai-processor/index.js';
 import { validator } from './services/validation/index.js';
 import { reportGenerator } from './services/report-generator/index.js';
+import { FrontendAdapter } from './adapters/frontend-adapter.js';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -41,8 +42,12 @@ app.get('/api/reports/latest', async (req, res) => {
     const content = await fs.readFile(latestFile, 'utf-8');
     const report = JSON.parse(content);
     
-    res.json(report);
+    // 转换为前端格式
+    const frontendReport = FrontendAdapter.adaptReport(report);
+    
+    res.json(frontendReport);
   } catch (error: any) {
+    console.error('[API] 获取最新报告失败:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -56,7 +61,10 @@ app.get('/api/reports/:date', async (req, res) => {
     const content = await fs.readFile(reportFile, 'utf-8');
     const report = JSON.parse(content);
     
-    res.json(report);
+    // 转换为前端格式
+    const frontendReport = FrontendAdapter.adaptReport(report);
+    
+    res.json(frontendReport);
   } catch (error: any) {
     if (error.code === 'ENOENT') {
       res.status(404).json({ error: '报告不存在' });

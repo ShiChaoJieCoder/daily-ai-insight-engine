@@ -18,7 +18,18 @@
     "overview": "Overview",
     "hotTopics": "Hot Topics",
     "trends": "Trends",
-    "analysis": "Analysis"
+    "analysis": "Analysis",
+    "snapshot": "Snapshot",
+    "hotspots": "Hotspots",
+    "charts": "Charts",
+    "deepDive": "Deep Dive",
+    "risksOpportunities": "Risks & Opportunities",
+    "risk": "Risk",
+    "opportunity": "Opportunity",
+    "articles": "articles",
+    "pipeline": "Pipeline",
+    "insufficientData": "Insufficient data for this window — figures may be sparse",
+    "momentum": "Momentum"
   },
   "report": {
     "generatedAt": "Generated at",
@@ -52,7 +63,23 @@
     "release": "Release",
     "funding": "Funding",
     "regulation": "Regulation",
-    "discussion": "Discussion"
+    "discussion": "Discussion",
+    "source": "Source",
+    "publishDate": "Published",
+    "category": "Category",
+    "tags": "Tags",
+    "entities": "Entities",
+    "companies": "Companies",
+    "products": "Products",
+    "technologies": "Technologies",
+    "people": "People",
+    "impact": "Impact Analysis",
+    "impactLevel": "Impact Level",
+    "timeline": "Timeline",
+    "immediate": "Immediate",
+    "shortTerm": "Short-term",
+    "longTerm": "Long-term",
+    "stakeholders": "Stakeholders"
   },
   "trends": {
     "title": "Trend Analysis",
@@ -67,7 +94,25 @@
     "sentiment": "Sentiment Trend",
     "companies": "Top Companies",
     "technologies": "Top Technologies",
-    "mentions": "mentions"
+    "mentions": "mentions",
+    "count": "Count",
+    "percentage": "Percentage"
+  },
+  "category": {
+    "research": "Research",
+    "product": "Product",
+    "funding": "Funding",
+    "policy": "Policy",
+    "discussion": "Discussion"
+  },
+  "news": {
+    "title": "Title",
+    "content": "Content",
+    "summary": "Summary",
+    "fullText": "Full Text",
+    "readMore": "Read More",
+    "relatedNews": "Related News",
+    "noNews": "No news available"
   },
   "footer": {
     "copyright": "© 2026 Daily AI Insight Engine. All rights reserved.",

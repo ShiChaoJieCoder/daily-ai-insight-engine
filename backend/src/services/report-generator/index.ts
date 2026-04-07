@@ -22,7 +22,7 @@ export class ReportGeneratorService {
       },
       
       summary: {
-        hotTopics: this.extractHotTopics(items, 5),
+        hotTopics: this.extractHotTopics(items, 15),
         keyMetrics: this.calculateKeyMetrics(items)
       },
       
@@ -43,9 +43,18 @@ export class ReportGeneratorService {
   /**
    * 提取热点事件
    */
-  extractHotTopics(items: NewsItem[], topN: number = 5): HotTopic[] {
-    // 按重要性排序
-    const sorted = [...items].sort((a, b) => b.significance - a.significance);
+  extractHotTopics(items: NewsItem[], topN: number = 15): HotTopic[] {
+    // 按重要性排序，同时考虑情感分数和影响级别
+    const sorted = [...items].sort((a, b) => {
+      // 综合评分：重要性(60%) + 情感积极度(20%) + 影响级别(20%)
+      const scoreA = a.significance * 0.6 + 
+                     (a.sentiment?.score || 0) * 2 + 
+                     (a.impact?.level === 'high' ? 2 : a.impact?.level === 'medium' ? 1 : 0);
+      const scoreB = b.significance * 0.6 + 
+                     (b.sentiment?.score || 0) * 2 + 
+                     (b.impact?.level === 'high' ? 2 : b.impact?.level === 'medium' ? 1 : 0);
+      return scoreB - scoreA;
+    });
     
     return sorted.slice(0, topN).map((item, index) => ({
       rank: index + 1,

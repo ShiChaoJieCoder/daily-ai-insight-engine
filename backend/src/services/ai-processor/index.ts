@@ -1,30 +1,54 @@
 /**
  * AI处理服务
  * 负责调用AI模型进行信息提取和分析
+ * 支持规则引擎作为备选方案（无需AI API）
  */
 
 import OpenAI from 'openai';
 import { config } from '../../config/index.js';
 import { PROMPTS, fillPromptTemplate } from './prompts.js';
+import { ruleAnalyzer } from '../rule-analyzer/index.js';
 import type { RawNewsItem, PartialNewsItem, NewsItem, AIResponse } from '../../types/index.js';
 
 export class AIProcessorService {
   private openai: OpenAI;
+  private useRuleEngine: boolean = false;
   
   constructor() {
     this.openai = new OpenAI({
       apiKey: config.openai.apiKey,
       organization: config.openai.organization
     });
+    
+    // 如果没有配置OpenAI API Key，自动使用规则引擎
+    if (!config.openai.apiKey || config.openai.apiKey === 'your-api-key-here') {
+      console.log('[AI] 未配置OpenAI API Key，将使用规则引擎');
+      this.useRuleEngine = true;
+    }
+  }
+  
+  /**
+   * 启用/禁用规则引擎模式
+   */
+  setRuleEngineMode(enabled: boolean) {
+    this.useRuleEngine = enabled;
+    console.log(`[AI] 规则引擎模式: ${enabled ? '启用' : '禁用'}`);
   }
   
   /**
    * 基础信息提取（批处理）
-   * 使用GPT-3.5-turbo，成本低，速度快
+   * 使用GPT-3.5-turbo或规则引擎
    */
   async extractBasicInfo(items: RawNewsItem[]): Promise<PartialNewsItem[]> {
     console.log(`[AI] 开始基础提取，共 ${items.length} 条新闻`);
     
+    // 如果启用规则引擎，使用规则引擎
+    if (this.useRuleEngine) {
+      console.log('[AI] 使用规则引擎进行基础提取');
+      return ruleAnalyzer.extractBasicInfo(items);
+    }
+    
+    // 否则使用OpenAI API
     // 构造输入数据
     const newsItemsText = items.map((item, idx) => `
 【新闻 ${idx + 1}】
@@ -74,17 +98,27 @@ ID: ${item.url}
       
     } catch (error) {
       console.error('[AI] 基础提取失败:', error);
-      throw error;
+      // 如果API失败，回退到规则引擎
+      console.log('[AI] API失败，回退到规则引擎');
+      this.useRuleEngine = true;
+      return ruleAnalyzer.extractBasicInfo(items);
     }
   }
   
   /**
    * 深度分析
-   * 使用GPT-4，进行情感分析、影响评估等
+   * 使用GPT-4或规则引擎，进行情感分析、影响评估等
    */
   async analyzeInDepth(items: PartialNewsItem[]): Promise<NewsItem[]> {
     console.log(`[AI] 开始深度分析，共 ${items.length} 条新闻`);
     
+    // 如果启用规则引擎，使用规则引擎
+    if (this.useRuleEngine) {
+      console.log('[AI] 使用规则引擎进行深度分析');
+      return ruleAnalyzer.analyzeInDepth(items);
+    }
+    
+    // 否则使用OpenAI API
     // 构造结构化数据
     const structuredData = JSON.stringify(items.map(item => ({
       id: item.id,
@@ -141,7 +175,10 @@ ID: ${item.url}
       
     } catch (error) {
       console.error('[AI] 深度分析失败:', error);
-      throw error;
+      // 如果API失败，回退到规则引擎
+      console.log('[AI] API失败，回退到规则引擎');
+      this.useRuleEngine = true;
+      return ruleAnalyzer.analyzeInDepth(items);
     }
   }
   
@@ -181,8 +218,11 @@ ID: ${item.url}
   ): Promise<OpenAI.ChatCompletion> {
     for (let i = 0; i < retries; i++) {
       try {
-        const response = await this.openai.chat.completions.create(params);
-        return response;
+        const response = await this.openai.chat.completions.create({
+          ...params,
+          stream: false
+        });
+        return response as OpenAI.ChatCompletion;
       } catch (error: any) {
         console.error(`[AI] 调用失败 (尝试 ${i + 1}/${retries}):`, error.message);
         

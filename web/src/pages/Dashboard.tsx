@@ -1,6 +1,7 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { useTranslation } from 'react-i18next'
+import { useEffect } from 'react'
 import {
   Activity,
   AlertTriangle,
@@ -33,6 +34,63 @@ function formatGeneratedAt(iso: string) {
 export function Dashboard() {
   const { t } = useTranslation()
   const report = useReportStore((s) => s.report)
+  const loading = useReportStore((s) => s.loading)
+  const error = useReportStore((s) => s.error)
+  const fetchLatestReport = useReportStore((s) => s.fetchLatestReport)
+
+  // 组件加载时自动获取最新报告
+  useEffect(() => {
+    fetchLatestReport()
+  }, [fetchLatestReport])
+
+  // 加载状态
+  if (loading) {
+    return (
+      <div className="dash" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>{t('common.loading')}</p>
+        </div>
+      </div>
+    )
+  }
+
+  // 错误状态
+  if (error) {
+    return (
+      <div className="dash" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <AlertTriangle size={48} color="var(--error)" style={{ marginBottom: '1rem' }} />
+          <p style={{ fontSize: '1.2rem', color: 'var(--error)', marginBottom: '0.5rem' }}>{t('common.error')}</p>
+          <p style={{ color: 'var(--text-muted)' }}>{error}</p>
+          <button 
+            onClick={() => fetchLatestReport()} 
+            style={{ 
+              marginTop: '1rem', 
+              padding: '0.5rem 1rem', 
+              background: 'var(--accent)', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '4px', 
+              cursor: 'pointer' 
+            }}
+          >
+            {t('common.refresh')}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  // 无数据状态
+  if (!report) {
+    return (
+      <div className="dash" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>{t('common.noData')}</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <Tooltip.Provider delayDuration={200}>
@@ -55,7 +113,7 @@ export function Dashboard() {
             </span>
             <span className="dash__meta-pill">
               <Newspaper size={16} aria-hidden />
-              {report.meta.article_count} articles
+              {report.meta.article_count} {t('dashboard.articles')}
             </span>
             <span className="dash__meta-pill dash__meta-pill--mono">
               <Layers size={16} aria-hidden />
@@ -65,7 +123,7 @@ export function Dashboard() {
               <Tooltip.Trigger asChild>
                 <span className="dash__meta-pill dash__meta-pill--btn">
                   <Info size={16} aria-hidden />
-                  Pipeline {report.meta.pipeline_version}
+                  {t('dashboard.pipeline')} {report.meta.pipeline_version}
                 </span>
               </Tooltip.Trigger>
               <Tooltip.Portal>
@@ -79,7 +137,7 @@ export function Dashboard() {
           {report.meta.insufficient_data ? (
             <p className="dash__warn" role="status">
               <AlertTriangle size={18} aria-hidden />
-              Insufficient data for this window — figures may be sparse.
+              {t('dashboard.insufficientData')}
             </p>
           ) : null}
         </header>
@@ -88,25 +146,25 @@ export function Dashboard() {
           <Tabs.List className="dash__tab-list" aria-label="Report sections">
             <Tabs.Trigger className="dash__tab" value="snapshot">
               <Activity size={16} aria-hidden />
-              Snapshot
+              {t('dashboard.snapshot')}
             </Tabs.Trigger>
             <Tabs.Trigger className="dash__tab" value="hotspots">
               <Flame size={16} aria-hidden />
-              Hotspots
+              {t('dashboard.hotspots')}
             </Tabs.Trigger>
             <Tabs.Trigger className="dash__tab" value="trends">
               <Sparkles size={16} aria-hidden />
-              Trends
+              {t('dashboard.trends')}
             </Tabs.Trigger>
             <Tabs.Trigger className="dash__tab" value="charts">
               <BarChart3 size={16} aria-hidden />
-              Charts
+              {t('dashboard.charts')}
             </Tabs.Trigger>
           </Tabs.List>
 
           <Tabs.Content className="dash__panel" value="snapshot">
             <section className="dash__section">
-              <h2 className="dash__h2">Deep dive</h2>
+              <h2 className="dash__h2">{t('dashboard.deepDive')}</h2>
               <div className="dash__deep-grid">
                 {report.deep_dive.map((d) => (
                   <article key={d.id} className="deep-card">
@@ -119,7 +177,7 @@ export function Dashboard() {
 
             {report.risks_opportunities && report.risks_opportunities.length > 0 ? (
               <section className="dash__section">
-                <h2 className="dash__h2">Risks &amp; opportunities</h2>
+                <h2 className="dash__h2">{t('dashboard.risksOpportunities')}</h2>
                 <ul className="ro-list">
                   {report.risks_opportunities.map((ro) => (
                     <li key={ro.id} className={`ro-list__item ro-list__item--${ro.kind}`}>
@@ -129,7 +187,7 @@ export function Dashboard() {
                         ) : (
                           <Sparkles size={14} aria-hidden />
                         )}
-                        {ro.kind}
+                        {t(`dashboard.${ro.kind}`)}
                       </span>
                       <div>
                         <h3 className="ro-list__title">{ro.title}</h3>
@@ -161,7 +219,7 @@ export function Dashboard() {
                       <h3 className="trend-list__title">{t.title}</h3>
                       {t.momentum ? (
                         <span className={`trend-list__mom trend-list__mom--${t.momentum}`}>
-                          {t.momentum}
+                          {t.momentum.charAt(0).toUpperCase() + t.momentum.slice(1)}
                         </span>
                       ) : null}
                     </div>
