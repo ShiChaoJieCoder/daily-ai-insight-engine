@@ -1,0 +1,40 @@
+{
+  "name": "daily-ai-insight-engine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI舆情分析日报系统 - 从每日新闻信息中提取结构化洞察",
+  "packageManager": "yarn@4.0.0",
+  "workspaces": [
+    "backend",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn workspace backend dev\" \"yarn workspace web dev\"",
+    "dev:backend": "yarn workspace backend dev",
+    "dev:web": "yarn workspace web dev",
+    "build": "yarn workspaces foreach -A run build",
+    "build:backend": "yarn workspace backend build",
+    "build:web": "yarn workspace web build",
+    "generate-report": "yarn workspace backend generate-report",
+    "test": "yarn workspaces foreach -A run test",
+    "lint": "yarn workspaces foreach -A run lint",
+    "clean": "yarn workspaces foreach -A exec rm -rf node_modules dist build .turbo && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "ai",
+    "news",
+    "analysis",
+    "report",
+    "sentiment-analysis",
+    "data-visualization"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/daily-ai-insight-engine.git"
+  }
+}

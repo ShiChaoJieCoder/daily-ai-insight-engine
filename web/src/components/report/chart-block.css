@@ -1,0 +1,21 @@
+.chart-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1rem 0.5rem;
+  text-align: left;
+}
+
+.chart-block__title {
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.chart-block__canvas {
+  width: 100%;
+  min-height: 260px;
+}

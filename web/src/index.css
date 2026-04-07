@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --font-display: 'DM Serif Display', Georgia, 'Times New Roman', serif;
+  --font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+  --bg: oklch(0.985 0.012 95);
+  --surface: oklch(0.995 0.008 95);
+  --surface-elevated: oklch(0.97 0.015 95);
+  --border: oklch(0.88 0.02 280);
+  --text: oklch(0.38 0.03 280);
+  --text-muted: oklch(0.48 0.03 280);
+  --text-heading: oklch(0.22 0.04 280);
+  --code-bg: oklch(0.94 0.02 95);
+
+  --accent: oklch(0.52 0.14 35);
+  --accent-muted: oklch(0.62 0.1 35);
+  --positive: oklch(0.48 0.12 155);
+  --warn: oklch(0.58 0.16 55);
+
+  --chart-1: oklch(0.55 0.14 35);
+  --chart-2: oklch(0.52 0.12 200);
+  --chart-3: oklch(0.58 0.1 280);
+  --chart-4: oklch(0.62 0.12 130);
+  --chart-5: oklch(0.5 0.08 60);
+  --chart-grid: oklch(0.88 0.02 280);
+
+  --shadow-soft:
+    0 1px 2px oklch(0.2 0.02 280 / 0.06),
+    0 8px 24px oklch(0.2 0.02 280 / 0.06);
+
+  color-scheme: light;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: oklch(0.16 0.02 280);
+    --surface: oklch(0.2 0.025 280);
+    --surface-elevated: oklch(0.24 0.03 280);
+    --border: oklch(0.32 0.03 280);
+    --text: oklch(0.78 0.02 280);
+    --text-muted: oklch(0.65 0.02 280);
+    --text-heading: oklch(0.94 0.01 280);
+    --code-bg: oklch(0.26 0.03 280);
+
+    --accent: oklch(0.72 0.12 45);
+    --accent-muted: oklch(0.62 0.1 45);
+    --positive: oklch(0.72 0.11 160);
+    --warn: oklch(0.75 0.14 70);
+
+    --chart-1: oklch(0.72 0.12 45);
+    --chart-2: oklch(0.68 0.1 220);
+    --chart-3: oklch(0.7 0.1 290);
+    --chart-4: oklch(0.72 0.1 150);
+    --chart-5: oklch(0.65 0.08 70);
+    --chart-grid: oklch(0.35 0.02 280);
+
+    --shadow-soft:
+      0 1px 2px oklch(0 0 0 / 0.25),
+      0 12px 32px oklch(0 0 0 / 0.35);
+
+    color-scheme: dark;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100svh;
+  text-align: initial;
+  border: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: inherit;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+a:hover {
+  color: var(--accent-muted);
+}

@@ -1,0 +1,111 @@
+{
+  "meta": {
+    "generated_at": "2026-04-07T06:30:00.000Z",
+    "dataset_id": "ai-news-2026-04-06",
+    "pipeline_version": "0.2.1",
+    "article_count": 186,
+    "insufficient_data": false
+  },
+  "hotspots": [
+    {
+      "id": "hs-1",
+      "title": "Frontier labs tighten inference SLAs for enterprise",
+      "summary": "Several providers published latency and uptime commitments aimed at regulated buyers, signaling a shift from raw capability claims to operational guarantees.",
+      "related_article_ids": ["a-101", "a-142"]
+    },
+    {
+      "id": "hs-2",
+      "title": "Open-weight tooling gains traction in on-prem workflows",
+      "summary": "Teams are mixing small local models with retrieval and policy layers; the story is less about one model and more about composable stacks.",
+      "related_article_ids": ["a-088", "a-155", "a-160"]
+    },
+    {
+      "id": "hs-3",
+      "title": "Evaluation harnesses move toward task suites, not single scores",
+      "summary": "Benchmarks framed as scenario batteries are replacing leaderboard chasing; buyers want reproducible passes on their own data slices.",
+      "related_article_ids": ["a-022"]
+    }
+  ],
+  "deep_dive": [
+    {
+      "id": "dd-1",
+      "title": "Why “agent reliability” is becoming a procurement keyword",
+      "narrative": "Enterprises are asking for failure modes, rollback paths, and human-in-the-loop defaults before expanding automations. Vendors that document operational playbooks are winning pilots; those that only demo demos are stalled in PoC.",
+      "related_article_ids": ["a-101", "a-177"]
+    }
+  ],
+  "trends": [
+    {
+      "id": "tr-1",
+      "title": "Retrieval quality as the bottleneck",
+      "summary": "Chunking, freshness, and permission-aware indexes matter more than marginal model upgrades for many internal copilots.",
+      "momentum": "rising"
+    },
+    {
+      "id": "tr-2",
+      "title": "Synthetic data disclosure",
+      "summary": "Expect more labeling of training and eval provenance as procurement and compliance teams join the conversation.",
+      "momentum": "stable"
+    },
+    {
+      "id": "tr-3",
+      "title": "Purely cloud-only AI stacks",
+      "summary": "Air-gapped and hybrid deployments are pulling budget and attention away from default public API paths.",
+      "momentum": "cooling"
+    }
+  ],
+  "risks_opportunities": [
+    {
+      "id": "ro-1",
+      "kind": "risk",
+      "title": "Shadow AI spend",
+      "detail": "Department-level tools without centralized review may create inconsistent data handling."
+    },
+    {
+      "id": "ro-2",
+      "kind": "opportunity",
+      "title": "Evaluation as a shared service",
+      "detail": "Central teams that own benchmarks and red-teaming can unblock multiple product lines at once."
+    }
+  ],
+  "charts": [
+    {
+      "id": "ch-1",
+      "title": "Topic mix (structured items)",
+      "type": "bar",
+      "data": [
+        { "name": "Agent", "value": 34 },
+        { "name": "LLM", "value": 28 },
+        { "name": "Product", "value": 18 },
+        { "name": "Research", "value": 12 },
+        { "name": "Policy", "value": 8 }
+      ]
+    },
+    {
+      "id": "ch-2",
+      "title": "Event types",
+      "type": "pie",
+      "data": [
+        { "name": "release", "value": 41 },
+        { "name": "research", "value": 27 },
+        { "name": "opinion", "value": 19 },
+        { "name": "funding", "value": 8 },
+        { "name": "policy", "value": 5 }
+      ]
+    },
+    {
+      "id": "ch-3",
+      "title": "Attention index (7d)",
+      "type": "line",
+      "data": [
+        { "name": "Apr 1", "value": 42 },
+        { "name": "Apr 2", "value": 48 },
+        { "name": "Apr 3", "value": 45 },
+        { "name": "Apr 4", "value": 52 },
+        { "name": "Apr 5", "value": 58 },
+        { "name": "Apr 6", "value": 61 },
+        { "name": "Apr 7", "value": 55 }
+      ]
+    }
+  ]
+}

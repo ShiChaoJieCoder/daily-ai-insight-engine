@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["meta", "items"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["fetched_at", "sources"],
+      "properties": {
+        "fetched_at": { "type": "string", "format": "date-time" },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/rawItem" }
+    }
+  },
+  "$defs": {
+    "rawItem": {
+      "type": "object",
+      "required": [
+        "id",
+        "source_name",
+        "source_url",
+        "article_url",
+        "title",
+        "published_at",
+        "language",
+        "summary",
+        "content_quality"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "source_name": { "type": "string" },
+        "source_url": { "type": "string", "format": "uri" },
+        "article_url": { "type": "string", "format": "uri" },
+        "title": { "type": "string" },
+        "published_at": { "type": "string", "format": "date-time" },
+        "language": { "type": "string", "enum": ["en", "zh", "mixed", "unknown"] },
+        "summary": { "type": "string" },
+        "raw_text": { "type": "string" },
+        "content_quality": { "type": "string", "enum": ["full", "rss_summary", "partial"] }
+      }
+    }
+  }
+}
