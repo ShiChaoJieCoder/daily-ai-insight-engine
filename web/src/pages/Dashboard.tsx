@@ -1,5 +1,6 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import * as Tooltip from '@radix-ui/react-tooltip'
+import { useTranslation } from 'react-i18next'
 import {
   Activity,
   AlertTriangle,
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react'
 import { ChartBlock } from '../components/report/ChartBlock'
 import { HotspotCard } from '../components/report/HotspotCard'
+import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { useReportStore } from '../store/reportStore'
 import './dashboard.css'
 
@@ -29,18 +31,23 @@ function formatGeneratedAt(iso: string) {
 }
 
 export function Dashboard() {
+  const { t } = useTranslation()
   const report = useReportStore((s) => s.report)
 
   return (
     <Tooltip.Provider delayDuration={200}>
       <div className="dash">
         <header className="dash__hero">
-          <p className="dash__eyebrow">Daily AI Insight Engine</p>
-          <h1 className="dash__title">Your briefing</h1>
-          <p className="dash__subtitle">
-            Synthesized signals from the last pipeline run — hotspots, trends, and charts aligned
-            to structured extraction.
-          </p>
+          <div className="dash__hero-header">
+            <div>
+              <p className="dash__eyebrow">{t('common.appName')}</p>
+              <h1 className="dash__title">{t('dashboard.title')}</h1>
+              <p className="dash__subtitle">
+                {t('dashboard.subtitle')}
+              </p>
+            </div>
+            <LanguageSwitcher />
+          </div>
           <div className="dash__meta-row">
             <span className="dash__meta-pill">
               <Calendar size={16} aria-hidden />

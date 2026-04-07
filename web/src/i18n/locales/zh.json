@@ -1,0 +1,77 @@
+{
+  "common": {
+    "appName": "AI舆情分析日报系统",
+    "loading": "加载中...",
+    "error": "错误",
+    "noData": "暂无数据",
+    "refresh": "刷新",
+    "language": "语言"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "reports": "报告",
+    "settings": "设置"
+  },
+  "dashboard": {
+    "title": "AI领域日报",
+    "subtitle": "从每日新闻中提取结构化洞察",
+    "overview": "概览",
+    "hotTopics": "热点话题",
+    "trends": "趋势分析",
+    "analysis": "深度分析"
+  },
+  "report": {
+    "generatedAt": "生成时间",
+    "dataSources": "数据来源",
+    "newsCount": "新闻数量",
+    "date": "日期",
+    "summary": "摘要",
+    "details": "详情",
+    "viewMore": "查看更多",
+    "collapse": "收起"
+  },
+  "metrics": {
+    "totalNews": "新闻总数",
+    "hotEvents": "热点事件",
+    "sentiment": "情感分析",
+    "positive": "正面",
+    "neutral": "中性",
+    "negative": "负面",
+    "distribution": "分布"
+  },
+  "hotspot": {
+    "title": "今日热点话题",
+    "rank": "排名",
+    "significance": "重要性",
+    "high": "高",
+    "medium": "中",
+    "low": "低",
+    "eventType": "事件类型",
+    "impactAreas": "影响领域",
+    "breakthrough": "技术突破",
+    "release": "产品发布",
+    "funding": "融资事件",
+    "regulation": "监管政策",
+    "discussion": "行业讨论"
+  },
+  "trends": {
+    "title": "趋势判断",
+    "technology": "技术趋势",
+    "application": "应用趋势",
+    "policy": "政策趋势",
+    "capital": "资本趋势",
+    "noTrends": "未检测到显著趋势"
+  },
+  "chart": {
+    "eventType": "事件类型分布",
+    "sentiment": "情感趋势",
+    "companies": "热门公司",
+    "technologies": "热门技术",
+    "mentions": "次提及"
+  },
+  "footer": {
+    "copyright": "© 2026 AI舆情分析日报系统。保留所有权利。",
+    "generatedBy": "由AI自动生成",
+    "forReference": "仅供参考"
+  }
+}
