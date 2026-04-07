@@ -1,7 +1,7 @@
 import * as Tabs from '@radix-ui/react-tabs'
 import * as Tooltip from '@radix-ui/react-tooltip'
 import { useTranslation } from 'react-i18next'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, type MouseEvent } from 'react'
 import {
   Activity,
   AlertTriangle,
@@ -56,12 +56,13 @@ export function Dashboard() {
   
   // 地区过滤状态
   const [regionFilter, setRegionFilter] = useState<Region | 'all'>('all')
+  const [expandedRoId, setExpandedRoId] = useState<string | null>(null)
 
   // 组件加载时自动获取最新报告
   useEffect(() => {
     fetchLatestReport()
   }, [fetchLatestReport])
-  
+
   // 为数据添加地区标签并过滤
   const filteredData = useMemo(() => {
     if (!report) return null;
@@ -86,6 +87,25 @@ export function Dashboard() {
       trends: taggedTrends.filter(t => t.region === regionFilter),
     };
   }, [report, regionFilter])
+
+  const handleRoMouseMove = (event: MouseEvent<HTMLElement>) => {
+    const card = event.currentTarget
+    const rect = card.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    const nx = x / rect.width - 0.5
+    const ny = y / rect.height - 0.5
+    card.style.setProperty('--mx', `${x}px`)
+    card.style.setProperty('--my', `${y}px`)
+    card.style.setProperty('--rx', `${(-ny * 5).toFixed(2)}deg`)
+    card.style.setProperty('--ry', `${(nx * 7).toFixed(2)}deg`)
+  }
+
+  const handleRoMouseLeave = (event: MouseEvent<HTMLElement>) => {
+    const card = event.currentTarget
+    card.style.setProperty('--rx', '0deg')
+    card.style.setProperty('--ry', '0deg')
+  }
 
   // 加载状态
   if (loading) {
@@ -245,7 +265,12 @@ export function Dashboard() {
                   const formatted = formatContent(d.narrative);
                   const isChinese = /[\u4e00-\u9fff]/.test(d.title);
                   return (
-                    <article key={d.id} className="deep-card">
+                    <article
+                      key={d.id}
+                      className="deep-card news-card-interactive"
+                      onMouseMove={handleRoMouseMove}
+                      onMouseLeave={handleRoMouseLeave}
+                    >
                       <div className="deep-card__header">
                         <div className="deep-card__badge">
                           <Target size={14} aria-hidden />
@@ -294,8 +319,14 @@ export function Dashboard() {
                 <ul className="ro-list">
                   {report.risks_opportunities.map((ro) => {
                     const isChinese = /[\u4e00-\u9fff]/.test(ro.title);
+                    const isExpanded = expandedRoId === ro.id
                     return (
-                      <li key={ro.id} className={`ro-list__item ro-list__item--${ro.kind}`}>
+                      <li
+                        key={ro.id}
+                        className={`ro-list__item news-card-interactive ro-list__item--${ro.kind} ${isExpanded ? 'ro-list__item--expanded' : ''}`}
+                        onMouseMove={handleRoMouseMove}
+                        onMouseLeave={handleRoMouseLeave}
+                      >
                         <div className="ro-list__header">
                           <span className="ro-list__badge">
                             {ro.kind === 'risk' ? (
@@ -322,6 +353,14 @@ export function Dashboard() {
                             {stripMarkdown(ro.title)}
                           </h3>
                           <p className="ro-list__detail">{stripMarkdown(ro.detail)}</p>
+                          <button
+                            type="button"
+                            className="ro-list__expand-btn"
+                            aria-expanded={isExpanded}
+                            onClick={() => setExpandedRoId(isExpanded ? null : ro.id)}
+                          >
+                            {isExpanded ? '收起' : '展开'}
+                          </button>
                         </div>
                       </li>
                     );
@@ -361,7 +400,12 @@ export function Dashboard() {
                   };
                   const isChinese = /[\u4e00-\u9fff]/.test(t.title);
                   return (
-                    <li key={t.id} className="trend-list__item">
+                    <li
+                      key={t.id}
+                      className="trend-list__item news-card-interactive"
+                      onMouseMove={handleRoMouseMove}
+                      onMouseLeave={handleRoMouseLeave}
+                    >
                       <div className="trend-list__head">
                         <div className="trend-list__title-wrapper">
                           <Tag size={16} className="trend-list__icon" aria-hidden />

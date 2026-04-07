@@ -5,12 +5,15 @@
   padding: var(--space-5) var(--space-5) var(--space-3);
   text-align: left;
   transition:
-    border-color 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    box-shadow 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-color var(--motion-damping-base) var(--motion-spring-gentle),
+    box-shadow var(--motion-damping-base) var(--motion-spring-gentle),
+    transform var(--motion-damping-fast) var(--motion-spring-snappy);
 }
 
 .chart-block:hover {
   border-color: color-mix(in oklch, var(--border) 80%, var(--accent) 20%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px oklch(0.2 0.02 35 / 0.08);
 }
 
 .chart-block__title {

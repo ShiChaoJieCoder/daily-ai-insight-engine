@@ -15,8 +15,10 @@
   height: 100%;
 }
 
+/* 勿用 display:none：系统开启「减少动态效果」时会导致整层画布消失，看起来像「完全不播放」。
+   降级为略降透明度，仍保留可见动画。 */
 @media (prefers-reduced-motion: reduce) {
   .particle-morph-system {
-    display: none;
+    opacity: 0.45;
   }
 }

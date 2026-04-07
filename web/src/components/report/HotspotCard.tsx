@@ -1,7 +1,7 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { ChevronDown, Link2, ExternalLink, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect, useState, type MouseEvent } from 'react'
 import type { Hotspot } from '../../types/report'
 import { stripMarkdown, formatContent } from '../../utils/markdown'
 import { SwimmingSnake } from '../text-effects/SwimmingSnake'
@@ -28,9 +28,32 @@ export function HotspotCard({ hotspot }: Props) {
       setShowFish(lines > 5)
     }
   }, [formatted.summary])
+
+  const handleCardMouseMove = (event: MouseEvent<HTMLElement>) => {
+    const card = event.currentTarget
+    const rect = card.getBoundingClientRect()
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    const nx = x / rect.width - 0.5
+    const ny = y / rect.height - 0.5
+    card.style.setProperty('--mx', `${x}px`)
+    card.style.setProperty('--my', `${y}px`)
+    card.style.setProperty('--rx', `${(-ny * 5).toFixed(2)}deg`)
+    card.style.setProperty('--ry', `${(nx * 7).toFixed(2)}deg`)
+  }
+
+  const handleCardMouseLeave = (event: MouseEvent<HTMLElement>) => {
+    const card = event.currentTarget
+    card.style.setProperty('--rx', '0deg')
+    card.style.setProperty('--ry', '0deg')
+  }
   
   return (
-    <Collapsible.Root className="hotspot">
+    <Collapsible.Root
+      className="hotspot news-card-interactive"
+      onMouseMove={handleCardMouseMove}
+      onMouseLeave={handleCardMouseLeave}
+    >
       <div className="hotspot__header">
         <h3 className="hotspot__title">{stripMarkdown(hotspot.title)}</h3>
         <Collapsible.Trigger className="hotspot__trigger">

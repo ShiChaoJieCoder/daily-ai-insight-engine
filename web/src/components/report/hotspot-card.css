@@ -6,14 +6,18 @@
   border-radius: var(--radius-lg);
   padding: var(--space-5) var(--space-6);
   text-align: left;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background var(--motion-damping-base) var(--motion-spring-gentle),
+    border-color var(--motion-damping-base) var(--motion-spring-gentle),
+    transform var(--motion-damping-fast) var(--motion-spring-snappy),
+    box-shadow var(--motion-damping-base) var(--motion-spring-gentle);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 .hotspot:hover {
   background: var(--glass-bg-hover);
   border-color: var(--accent);
-  transform: translateY(-4px);
+  transform: translateY(-4px) rotateX(var(--rx)) rotateY(var(--ry)) scale(1.01);
   box-shadow: 0 12px 40px rgba(202, 138, 4, 0.15);
 }
 
@@ -120,10 +124,10 @@
   color: var(--text);
   text-decoration: none;
   transition:
-    background 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    border-color 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    color 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    background var(--motion-damping-base) var(--motion-spring-gentle),
+    border-color var(--motion-damping-base) var(--motion-spring-gentle),
+    color var(--motion-damping-fast) var(--motion-spring-gentle),
+    transform var(--motion-damping-fast) var(--motion-spring-snappy);
 }
 
 .hotspot__link:hover {
@@ -157,7 +161,12 @@
   font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    background var(--motion-damping-base) var(--motion-spring-gentle),
+    border-color var(--motion-damping-base) var(--motion-spring-gentle),
+    color var(--motion-damping-fast) var(--motion-spring-gentle),
+    transform var(--motion-damping-fast) var(--motion-spring-snappy),
+    box-shadow var(--motion-damping-base) var(--motion-spring-gentle);
 }
 
 .hotspot__trigger:hover {
@@ -178,7 +187,7 @@
 }
 
 .hotspot__chevron {
-  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform var(--motion-damping-base) var(--motion-spring-snappy);
 }
 
 .hotspot__content {
@@ -186,11 +195,11 @@
 }
 
 .hotspot__content[data-state='open'] {
-  animation: slideDown 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: slideDown var(--motion-damping-base) var(--motion-spring-snappy);
 }
 
 .hotspot__content[data-state='closed'] {
-  animation: slideUp 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  animation: slideUp var(--motion-damping-fast) var(--motion-spring-gentle);
 }
 
 @keyframes slideDown {
