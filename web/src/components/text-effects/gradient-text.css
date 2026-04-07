@@ -1,0 +1,28 @@
+.gradient-text {
+  background: linear-gradient(
+    90deg,
+    var(--accent),
+    var(--positive),
+    var(--accent-muted),
+    var(--accent)
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.gradient-text--animated {
+  animation: gradient-flow 5s linear infinite;
+}
+
+@keyframes gradient-flow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}

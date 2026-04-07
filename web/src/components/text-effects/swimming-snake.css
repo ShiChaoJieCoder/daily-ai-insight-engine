@@ -1,0 +1,23 @@
+.swimming-snake-canvas {
+  will-change: contents;
+  image-rendering: crisp-edges;
+}
+
+/* 容器需要相对定位 */
+.snake-container {
+  position: relative;
+  isolation: isolate;
+}
+
+/* 文字内容在蛇的上方 */
+.snake-text-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* 减少动画时的性能影响 */
+@media (prefers-reduced-motion: reduce) {
+  .swimming-snake-canvas {
+    display: none;
+  }
+}

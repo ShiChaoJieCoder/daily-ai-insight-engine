@@ -118,5 +118,10 @@
     "copyright": "© 2026 AI舆情分析日报系统。保留所有权利。",
     "generatedBy": "由AI自动生成",
     "forReference": "仅供参考"
+  },
+  "region": {
+    "all": "全部",
+    "domestic": "国内",
+    "international": "国外"
   }
 }

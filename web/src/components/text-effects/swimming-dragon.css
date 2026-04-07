@@ -1,0 +1,46 @@
+.swimming-dragon-canvas {
+  will-change: contents;
+  image-rendering: crisp-edges;
+  mix-blend-mode: multiply;
+}
+
+@media (prefers-color-scheme: dark) {
+  .swimming-dragon-canvas {
+    mix-blend-mode: screen;
+    opacity: 0.4 !important;
+  }
+}
+
+/* 容器需要相对定位 */
+.dragon-container {
+  position: relative;
+  isolation: isolate;
+}
+
+/* 文字内容在龙的上方 */
+.dragon-text-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* 减少动画时的性能影响 */
+@media (prefers-reduced-motion: reduce) {
+  .swimming-dragon-canvas {
+    display: none;
+  }
+}
+
+/* 为容器添加微妙的金色光晕 */
+.hotspot__summary-wrapper--with-snake::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(202, 138, 4, 0.03) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 0;
+  border-radius: inherit;
+}

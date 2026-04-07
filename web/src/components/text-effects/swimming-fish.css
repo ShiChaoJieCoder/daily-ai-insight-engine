@@ -1,0 +1,48 @@
+.swimming-fish {
+  will-change: transform, left, top;
+  transition: transform 0.1s ease-out;
+}
+
+.swimming-fish svg {
+  color: var(--accent);
+}
+
+/* 为包含小鱼的容器添加样式 */
+.fish-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* 文字环绕效果 */
+.fish-text-wrap {
+  position: relative;
+  float: left;
+  width: 100%;
+  shape-margin: 20px;
+}
+
+/* 小鱼游动时的波纹效果 */
+@keyframes fish-ripple {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.swimming-fish::before {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--accent) 20%, transparent) 0%,
+    transparent 70%
+  );
+  animation: fish-ripple 3s ease-in-out infinite;
+  pointer-events: none;
+}

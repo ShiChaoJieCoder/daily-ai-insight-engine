@@ -200,6 +200,13 @@ yarn dev:backend
 yarn dev:web
 ```
 
+**服务端口配置**：
+- 🔧 **后端服务**：http://localhost:3000
+- 🎨 **前端服务**：http://localhost:5173
+- 📊 **API健康检查**：http://localhost:3000/api/health
+
+> 🎉 **自动生成报告**：启动后端时，系统会自动检查今日报告是否存在。如果不存在，会自动拉取最新AI资讯并生成报告，无需手动操作！
+
 5. **访问应用**
 
 打开浏览器访问：http://localhost:5173
@@ -210,46 +217,52 @@ yarn dev:web
 
 ### 生成日报
 
-#### 方式1：通过脚本（推荐）
+#### 🎯 自动生成（推荐）
+
+**无需任何操作！** 执行 `yarn dev` 启动服务后，系统会自动：
+
+1. ✅ 检查今日报告是否存在
+2. ✅ 如果不存在，自动从多个数据源拉取最新AI资讯
+3. ✅ 自动调用AI/规则引擎进行分析
+4. ✅ 自动生成并保存报告（JSON + Markdown格式）
+5. ✅ 前端自动加载并展示报告
+
+**工作流程：**
+```
+yarn dev → 后端启动 → 检测今日报告 → 不存在？→ 自动生成 → 前端展示
+                                    ↓
+                                  存在？→ 直接加载 → 前端展示
+```
+
+#### 手动生成（可选）
+
+如果需要重新生成报告或生成历史日期的报告：
+
+**方式1：通过脚本**
 
 ```bash
-# 生成中文报告
-cd backend
-node dist/scripts/generate-report.js --lang=zh
-
-# 生成英文报告
-node dist/scripts/generate-report.js --lang=en
-
-# 或使用yarn命令（在根目录）
+# 在根目录执行
 yarn generate-report
 ```
 
-#### 方式2：通过API
+**方式2：通过API**
 
 ```bash
-# 生成中文报告
-curl -X POST http://localhost:3000/api/reports/generate \
-  -H "Content-Type: application/json" \
-  -d '{"date": "2026-04-07", "lang": "zh"}'
+# 生成今日报告
+curl -X POST http://localhost:3000/api/reports/generate
 
-# 生成英文报告
+# 生成指定日期的报告
 curl -X POST http://localhost:3000/api/reports/generate \
   -H "Content-Type: application/json" \
-  -d '{"date": "2026-04-07", "lang": "en"}'
+  -d '{"date": "2026-04-07"}'
 ```
-
-#### 方式3：通过前端界面
-
-1. 访问 http://localhost:5173
-2. 点击"生成新报告"按钮
-3. 选择日期
-4. 等待生成完成
 
 ### 查看报告
 
-- **Web界面**：http://localhost:5173/reports/latest
-- **JSON数据**：`backend/data/reports/2026-04-07-report-cn.json` (中文) / `-en.json` (英文)
-- **Markdown报告**：`backend/data/reports/2026-04-07-report-cn.md` (中文) / `-en.md` (英文)
+- **Web界面**：http://localhost:5173
+- **API接口**：http://localhost:3000/api/reports/latest
+- **JSON数据**：`backend/data/reports/2026-04-07-report.json`
+- **Markdown报告**：`backend/data/reports/2026-04-07-report.md`
 
 ---
 

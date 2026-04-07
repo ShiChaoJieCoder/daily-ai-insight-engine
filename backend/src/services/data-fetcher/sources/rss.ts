@@ -83,6 +83,28 @@ export class RSSSource {
  * 预定义的RSS源
  */
 export const RSS_SOURCES = [
+  // 国内中文媒体
+  {
+    name: '36氪 AI',
+    url: 'https://36kr.com/feed/ai'
+  },
+  {
+    name: '机器之心',
+    url: 'https://www.jiqizhixin.com/rss'
+  },
+  {
+    name: '量子位',
+    url: 'https://www.qbitai.com/feed'
+  },
+  {
+    name: 'AI科技评论',
+    url: 'https://www.leiphone.com/category/ai/feed'
+  },
+  {
+    name: '虎嗅 AI',
+    url: 'https://www.huxiu.com/rss/0/1.xml'
+  },
+  // 国际英文媒体
   {
     name: 'TechCrunch AI',
     url: 'https://techcrunch.com/tag/artificial-intelligence/feed/'

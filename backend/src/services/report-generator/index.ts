@@ -43,20 +43,46 @@ export class ReportGeneratorService {
   /**
    * 提取热点事件
    */
-  extractHotTopics(items: NewsItem[], topN: number = 15): HotTopic[] {
-    // 按重要性排序，同时考虑情感分数和影响级别
-    const sorted = [...items].sort((a, b) => {
-      // 综合评分：重要性(60%) + 情感积极度(20%) + 影响级别(20%)
-      const scoreA = a.significance * 0.6 + 
-                     (a.sentiment?.score || 0) * 2 + 
-                     (a.impact?.level === 'high' ? 2 : a.impact?.level === 'medium' ? 1 : 0);
-      const scoreB = b.significance * 0.6 + 
-                     (b.sentiment?.score || 0) * 2 + 
-                     (b.impact?.level === 'high' ? 2 : b.impact?.level === 'medium' ? 1 : 0);
-      return scoreB - scoreA;
+  extractHotTopics(items: NewsItem[], topN: number = 10): HotTopic[] {
+    // 1. 先按国内/国外分类
+    const domesticItems: NewsItem[] = [];
+    const internationalItems: NewsItem[] = [];
+    
+    items.forEach(item => {
+      const isChinese = /[\u4e00-\u9fff]/.test(item.title);
+      if (isChinese) {
+        domesticItems.push(item);
+      } else {
+        internationalItems.push(item);
+      }
     });
     
-    return sorted.slice(0, topN).map((item, index) => ({
+    console.log(`[HotTopics] 国内资讯: ${domesticItems.length} 条, 国际资讯: ${internationalItems.length} 条`);
+    
+    // 2. 计算综合评分的函数
+    const calculateScore = (item: NewsItem) => {
+      return item.significance * 0.6 + 
+             (item.sentiment?.score || 0) * 2 + 
+             (item.impact?.level === 'high' ? 2 : item.impact?.level === 'medium' ? 1 : 0);
+    };
+    
+    // 3. 分别对国内和国际资讯排序
+    const sortedDomestic = [...domesticItems].sort((a, b) => calculateScore(b) - calculateScore(a));
+    const sortedInternational = [...internationalItems].sort((a, b) => calculateScore(b) - calculateScore(a));
+    
+    // 4. 各取5条（国内5条 + 国际5条 = 总共10条）
+    const domesticCount = 5;
+    const internationalCount = 5;
+    
+    const topDomestic = sortedDomestic.slice(0, domesticCount);
+    const topInternational = sortedInternational.slice(0, internationalCount);
+    
+    console.log(`[HotTopics] 选取国内热点: ${topDomestic.length} 条, 国际热点: ${topInternational.length} 条`);
+    
+    // 5. 合并结果（国内在前）
+    const combined = [...topDomestic, ...topInternational];
+    
+    return combined.map((item, index) => ({
       rank: index + 1,
       title: item.title,
       significance: item.significance,
@@ -126,13 +152,23 @@ export class ReportGeneratorService {
   }
   
   /**
-   * 生成深度分析
+   * 生成深度分析（国内2条 + 国际2条，总共4条）
    */
   generateDeepDive(items: NewsItem[]) {
-    // 选择最重要的1-2个事件进行深度分析
-    const topItems = [...items]
-      .sort((a, b) => b.significance - a.significance)
-      .slice(0, 2);
+    // 分类
+    const domesticItems = items.filter(item => /[\u4e00-\u9fff]/.test(item.title));
+    const internationalItems = items.filter(item => !/[\u4e00-\u9fff]/.test(item.title));
+    
+    // 分别排序
+    const sortedDomestic = [...domesticItems].sort((a, b) => b.significance - a.significance);
+    const sortedInternational = [...internationalItems].sort((a, b) => b.significance - a.significance);
+    
+    // 各取2条（如果有的话）
+    const topItems: NewsItem[] = [];
+    topItems.push(...sortedDomestic.slice(0, 2));
+    topItems.push(...sortedInternational.slice(0, 2));
+    
+    console.log(`[DeepDive] 国内深度: ${Math.min(sortedDomestic.length, 2)} 条, 国际深度: ${Math.min(sortedInternational.length, 2)} 条`);
     
     return topItems.map(item => ({
       newsId: item.id,

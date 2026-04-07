@@ -1,0 +1,17 @@
+.particle-portrait {
+  will-change: contents;
+  image-rendering: crisp-edges;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle-portrait {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .particle-portrait {
+    opacity: 0.2 !important;
+    mix-blend-mode: screen;
+  }
+}

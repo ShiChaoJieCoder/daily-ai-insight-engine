@@ -74,88 +74,97 @@ app.get('/api/reports/:date', async (req, res) => {
   }
 });
 
+// 生成报告的核心逻辑（提取为独立函数，便于复用）
+async function generateReportForDate(date: Date) {
+  console.log(`\n========== 开始生成日报 ==========`);
+  console.log(`日期: ${date.toISOString().split('T')[0]}`);
+  
+  // 1. 数据获取
+  const rawData = await dataFetcher.fetchNews(date, config.dataSources);
+  
+  // 2. 数据清洗
+  const cleanedData = await dataFetcher.cleanData(rawData);
+  const deduplicatedData = dataFetcher.deduplicateData(cleanedData);
+  
+  // 3. AI基础提取（批处理）
+  const basicExtracted = await aiProcessor.processBatch(
+    deduplicatedData,
+    (batch) => aiProcessor.extractBasicInfo(batch),
+    config.processing.batchSize
+  );
+  
+  // 4. 数据验证
+  const validatedBasic = basicExtracted.filter(item => {
+    const result = validator.validateFormat(item);
+    if (!result.isValid) {
+      console.warn(`[Validation] 格式验证失败:`, result.errors);
+    }
+    return result.isValid;
+  });
+  
+  // 5. AI深度分析
+  const fullyAnalyzed = await aiProcessor.analyzeInDepth(validatedBasic);
+  
+  // 6. 数据验证与清洗
+  const validatedFull = fullyAnalyzed
+    .filter(item => {
+      const result = validator.validateLogic(item);
+      if (!result.isValid) {
+        console.warn(`[Validation] 逻辑验证失败:`, result.errors);
+      }
+      if (result.warnings.length > 0) {
+        console.warn(`[Validation] 警告:`, result.warnings);
+      }
+      return result.isValid;
+    })
+    .map(item => validator.cleanItem(item));
+  
+  // 7. 异常检测
+  const anomalies = validator.detectAnomalies(validatedFull);
+  if (anomalies.length > 0) {
+    console.warn(`[Validation] 检测到 ${anomalies.length} 个异常数据`);
+    anomalies.forEach(a => console.warn(`  - ${a.type}: ${a.field} - ${a.reason}`));
+  }
+  
+  // 8. 标记需要复核的数据
+  validatedFull.forEach(item => validator.markForReview(item));
+  const needsReview = validatedFull.filter(item => item._needsReview);
+  if (needsReview.length > 0) {
+    console.warn(`[Validation] ${needsReview.length} 条数据需要人工复核`);
+  }
+  
+  // 9. 生成报告
+  const report = await reportGenerator.generateReport(validatedFull, date);
+  
+  // 10. 保存报告
+  const dateStr = date.toISOString().split('T')[0];
+  await saveReport(report, dateStr);
+  
+  console.log(`========== 日报生成完成 ==========\n`);
+  
+  return {
+    report,
+    stats: {
+      rawCount: rawData.length,
+      cleanedCount: deduplicatedData.length,
+      analyzedCount: validatedFull.length,
+      anomalyCount: anomalies.length,
+      reviewCount: needsReview.length
+    }
+  };
+}
+
 // 生成新报告
 app.post('/api/reports/generate', async (req, res) => {
   try {
     const { date: dateStr } = req.body;
     const date = dateStr ? new Date(dateStr) : new Date();
     
-    console.log(`\n========== 开始生成日报 ==========`);
-    console.log(`日期: ${date.toISOString().split('T')[0]}`);
-    
-    // 1. 数据获取
-    const rawData = await dataFetcher.fetchNews(date, config.dataSources);
-    
-    // 2. 数据清洗
-    const cleanedData = await dataFetcher.cleanData(rawData);
-    const deduplicatedData = dataFetcher.deduplicateData(cleanedData);
-    
-    // 3. AI基础提取（批处理）
-    const basicExtracted = await aiProcessor.processBatch(
-      deduplicatedData,
-      (batch) => aiProcessor.extractBasicInfo(batch),
-      config.processing.batchSize
-    );
-    
-    // 4. 数据验证
-    const validatedBasic = basicExtracted.filter(item => {
-      const result = validator.validateFormat(item);
-      if (!result.isValid) {
-        console.warn(`[Validation] 格式验证失败:`, result.errors);
-      }
-      return result.isValid;
-    });
-    
-    // 5. AI深度分析
-    const fullyAnalyzed = await aiProcessor.analyzeInDepth(validatedBasic);
-    
-    // 6. 数据验证与清洗
-    const validatedFull = fullyAnalyzed
-      .filter(item => {
-        const result = validator.validateLogic(item);
-        if (!result.isValid) {
-          console.warn(`[Validation] 逻辑验证失败:`, result.errors);
-        }
-        if (result.warnings.length > 0) {
-          console.warn(`[Validation] 警告:`, result.warnings);
-        }
-        return result.isValid;
-      })
-      .map(item => validator.cleanItem(item));
-    
-    // 7. 异常检测
-    const anomalies = validator.detectAnomalies(validatedFull);
-    if (anomalies.length > 0) {
-      console.warn(`[Validation] 检测到 ${anomalies.length} 个异常数据`);
-      anomalies.forEach(a => console.warn(`  - ${a.type}: ${a.field} - ${a.reason}`));
-    }
-    
-    // 8. 标记需要复核的数据
-    validatedFull.forEach(item => validator.markForReview(item));
-    const needsReview = validatedFull.filter(item => item._needsReview);
-    if (needsReview.length > 0) {
-      console.warn(`[Validation] ${needsReview.length} 条数据需要人工复核`);
-    }
-    
-    // 9. 生成报告
-    const report = await reportGenerator.generateReport(validatedFull, date);
-    
-    // 10. 保存报告
-    const dateStr2 = date.toISOString().split('T')[0];
-    await saveReport(report, dateStr2);
-    
-    console.log(`========== 日报生成完成 ==========\n`);
+    const result = await generateReportForDate(date);
     
     res.json({
       success: true,
-      report,
-      stats: {
-        rawCount: rawData.length,
-        cleanedCount: deduplicatedData.length,
-        analyzedCount: validatedFull.length,
-        anomalyCount: anomalies.length,
-        reviewCount: needsReview.length
-      }
+      ...result
     });
     
   } catch (error: any) {
@@ -240,11 +249,51 @@ function generateMarkdownReport(report: any): string {
   return md;
 }
 
+// 检查今日报告是否存在
+async function checkTodayReport(): Promise<boolean> {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const reportFile = path.join(process.cwd(), 'data', 'reports', `${today}-report.json`);
+    
+    await fs.access(reportFile);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// 启动时自动生成今日报告
+async function autoGenerateTodayReport() {
+  try {
+    const hasReport = await checkTodayReport();
+    
+    if (hasReport) {
+      const today = new Date().toISOString().split('T')[0];
+      console.log(`✓ 今日报告已存在 (${today})`);
+      return;
+    }
+    
+    console.log(`\n📝 检测到今日报告不存在，开始自动生成...`);
+    
+    const date = new Date();
+    await generateReportForDate(date);
+    
+    console.log(`✓ 今日报告自动生成成功！\n`);
+    
+  } catch (error: any) {
+    console.error(`\n❌ 自动生成今日报告失败:`, error.message);
+    console.error(`提示：你可以稍后手动调用 POST /api/reports/generate 来生成报告\n`);
+  }
+}
+
 // 启动服务器
 const PORT = config.server.port;
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`\n🚀 服务器启动成功！`);
   console.log(`📍 地址: http://localhost:${PORT}`);
   console.log(`📊 健康检查: http://localhost:${PORT}/api/health`);
   console.log(`\n按 Ctrl+C 停止服务器\n`);
+  
+  // 启动后自动检查并生成今日报告
+  await autoGenerateTodayReport();
 });

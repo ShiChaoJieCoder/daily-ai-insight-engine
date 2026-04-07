@@ -22,11 +22,14 @@ export type ReportMeta = {
   insufficient_data?: boolean
 }
 
+export type Region = 'domestic' | 'international' | 'unknown'
+
 export type Hotspot = {
   id: string
   title: string
   summary: string
   related_article_ids: string[]
+  region?: Region
 }
 
 export type TrendItem = {
@@ -34,6 +37,7 @@ export type TrendItem = {
   title: string
   summary: string
   momentum?: 'rising' | 'stable' | 'cooling'
+  region?: Region
 }
 
 export type DeepDiveItem = {
@@ -41,6 +45,7 @@ export type DeepDiveItem = {
   title: string
   narrative: string
   related_article_ids: string[]
+  region?: Region
 }
 
 export type RiskOpportunity = {

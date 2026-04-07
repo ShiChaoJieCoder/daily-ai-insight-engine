@@ -8,16 +8,18 @@
     "web"
   ],
   "scripts": {
-    "dev": "concurrently \"yarn workspace backend dev\" \"yarn workspace web dev\"",
-    "dev:backend": "yarn workspace backend dev",
-    "dev:web": "yarn workspace web dev",
-    "build": "yarn workspaces foreach -A run build",
-    "build:backend": "yarn workspace backend build",
-    "build:web": "yarn workspace web build",
-    "generate-report": "yarn workspace backend generate-report",
-    "test": "yarn workspaces foreach -A run test",
-    "lint": "yarn workspaces foreach -A run lint",
-    "clean": "yarn workspaces foreach -A exec rm -rf node_modules dist build .turbo && rm -rf node_modules"
+    "dev": "concurrently \"cd backend && yarn dev\" \"cd web && yarn dev\"",
+    "dev:backend": "cd backend && yarn dev",
+    "dev:web": "cd web && yarn dev",
+    "build": "cd backend && yarn build && cd ../web && yarn build",
+    "build:backend": "cd backend && yarn build",
+    "build:web": "cd web && yarn build",
+    "generate-report": "cd backend && yarn generate-report",
+    "test": "cd backend && yarn test && cd ../web && yarn test",
+    "lint": "cd backend && yarn lint && cd ../web && yarn lint",
+    "clean": "rm -rf backend/node_modules backend/dist web/node_modules web/dist node_modules",
+    "check-ports": "bash scripts/check-ports.sh",
+    "stop": "lsof -ti:3000 -ti:5173 | xargs kill -9 2>/dev/null || echo '所有服务已停止'"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

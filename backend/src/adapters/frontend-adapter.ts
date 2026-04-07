@@ -26,16 +26,21 @@ export class FrontendAdapter {
         insufficient_data: report.meta.newsCount < 10
       },
       
-      // 热点事件（控制在5条）
-      hotspots: report.summary.hotTopics.slice(0, 5).map((topic: any) => ({
+      // 热点事件（保留所有，前端会根据需要显示）
+      hotspots: report.summary.hotTopics.map((topic: any) => ({
         id: `hotspot-${topic.rank}`,
         title: topic.title,
-        summary: topic.summary,
+        summary: this.cleanSummary(topic.summary, topic.title),
         related_article_ids: topic.relatedNews
       })),
       
-      // 深度洞察（控制在2条）
-      deep_dive: report.summary.hotTopics.slice(0, 2).map((topic: any) => ({
+      // 深度洞察（使用后端生成的深度分析，包含国内外各2条）
+      deep_dive: report.analysis.deepDive ? report.analysis.deepDive.map((dive: any, index: number) => ({
+        id: `dive-${index}`,
+        title: dive.title,
+        narrative: this.formatDeepDiveNarrative(dive),
+        related_article_ids: [dive.newsId]
+      })) : report.summary.hotTopics.slice(0, 4).map((topic: any) => ({
         id: `dive-${topic.rank}`,
         title: topic.title,
         narrative: this.generateNarrative(topic, report),
@@ -51,6 +56,53 @@ export class FrontendAdapter {
       // 图表数据
       charts: this.generateCharts(report)
     };
+  }
+  
+  /**
+   * 清理摘要文本，移除无效内容
+   */
+  private static cleanSummary(summary: string | undefined, title: string): string {
+    // 如果没有摘要或摘要无效（只有一个点、空白等），从标题生成简短描述
+    if (!summary || summary.trim() === '.' || summary.trim() === '' || summary.trim().length < 10) {
+      // 从标题提取前100个字符作为摘要
+      return title.substring(0, 100) + (title.length > 100 ? '...' : '');
+    }
+    
+    // 移除多余的空白和HTML标签
+    return summary
+      .replace(/<[^>]*>/g, '') // 移除HTML标签
+      .replace(/&nbsp;/g, ' ') // 替换&nbsp;
+      .replace(/\s+/g, ' ') // 合并多个空格
+      .trim();
+  }
+  
+  /**
+   * 格式化深度分析的叙述文本
+   */
+  private static formatDeepDiveNarrative(dive: any): string {
+    let narrative = `${dive.background}\n\n`;
+    
+    // 添加关键洞察
+    if (dive.keyInsights && dive.keyInsights.length > 0) {
+      dive.keyInsights.forEach((insight: string) => {
+        narrative += `**${insight}**\n\n`;
+      });
+    }
+    
+    // 添加影响分析
+    if (dive.impactAnalysis) {
+      if (dive.impactAnalysis.industry) {
+        narrative += `**行业影响**: ${dive.impactAnalysis.industry}\n\n`;
+      }
+      if (dive.impactAnalysis.technology) {
+        narrative += `**技术影响**: ${dive.impactAnalysis.technology}\n\n`;
+      }
+      if (dive.impactAnalysis.market) {
+        narrative += `**市场影响**: ${dive.impactAnalysis.market}\n\n`;
+      }
+    }
+    
+    return narrative;
   }
   
   /**
@@ -98,7 +150,7 @@ export class FrontendAdapter {
   }
   
   /**
-   * 提取趋势（每个momentum类型各取2条，总共6条）
+   * 提取趋势（总数10条，国内6条+国际4条）
    */
   private static extractTrends(report: any): any[] {
     const allTrends: any[] = [];
@@ -108,10 +160,11 @@ export class FrontendAdapter {
       Object.entries(report.analysis.trends).forEach(([key, value]: [string, any]) => {
         if (Array.isArray(value) && value.length > 0) {
           value.forEach((trend, idx) => {
+            const summary = trend.description || trend.summary || trend;
             allTrends.push({
               id: `trend-${key}-${idx}`,
               title: trend.title || trend,
-              summary: trend.description || trend.summary || trend,
+              summary: this.cleanSummary(summary, trend.title || trend),
               momentum: this.detectMomentum(trend)
             });
           });
@@ -125,53 +178,45 @@ export class FrontendAdapter {
         allTrends.push({
           id: `trend-${idx}`,
           title: topic.title,
-          summary: topic.summary,
+          summary: this.cleanSummary(topic.summary, topic.title),
           momentum: this.detectMomentumFromTopic(topic, idx)
         });
       });
     }
     
-    // 按momentum类型分组，每个类型取2条
-    const risingTrends = allTrends.filter(t => t.momentum === 'rising').slice(0, 2);
-    const stableTrends = allTrends.filter(t => t.momentum === 'stable').slice(0, 2);
-    const coolingTrends = allTrends.filter(t => t.momentum === 'cooling').slice(0, 2);
+    // 1. 按国内/国外分类
+    const domesticTrends = allTrends.filter(t => /[\u4e00-\u9fff]/.test(t.title));
+    const internationalTrends = allTrends.filter(t => !/[\u4e00-\u9fff]/.test(t.title));
     
-    // 如果某个类型不足2条，从其他热点补充
-    const result = [...risingTrends, ...stableTrends, ...coolingTrends];
+    console.log(`[Trends] 国内趋势: ${domesticTrends.length} 条, 国际趋势: ${internationalTrends.length} 条`);
     
-    if (result.length < 6 && report.summary.hotTopics.length >= 6) {
-      // 需要补充的数量
-      const needed = {
-        rising: 2 - risingTrends.length,
-        stable: 2 - stableTrends.length,
-        cooling: 2 - coolingTrends.length
-      };
-      
-      // 从剩余热点中补充，按顺序分配momentum类型
-      const usedIds = new Set(result.map(t => t.id));
-      const remainingTopics = report.summary.hotTopics.filter((topic: any) => 
-        !usedIds.has(`trend-${topic.rank}`)
-      );
-      
-      let momentumIndex = 0;
-      const momentumTypes: Array<'rising' | 'stable' | 'cooling'> = [];
-      
-      // 构建需要补充的momentum类型列表
-      if (needed.rising > 0) momentumTypes.push(...Array(needed.rising).fill('rising'));
-      if (needed.stable > 0) momentumTypes.push(...Array(needed.stable).fill('stable'));
-      if (needed.cooling > 0) momentumTypes.push(...Array(needed.cooling).fill('cooling'));
-      
-      remainingTopics.slice(0, momentumTypes.length).forEach((topic: any) => {
-        result.push({
-          id: `trend-${topic.rank}`,
-          title: topic.title,
-          summary: topic.summary,
-          momentum: momentumTypes[momentumIndex++]
-        });
-      });
-    }
+    // 2. 在每个分类内按momentum分组
+    const groupByMomentum = (trends: any[]) => ({
+      rising: trends.filter(t => t.momentum === 'rising'),
+      stable: trends.filter(t => t.momentum === 'stable'),
+      cooling: trends.filter(t => t.momentum === 'cooling')
+    });
     
-    return result;
+    const domesticGroups = groupByMomentum(domesticTrends);
+    const internationalGroups = groupByMomentum(internationalTrends);
+    
+    // 3. 从每个分类中选取，确保多样性（国内5条，国际5条，总共10条）
+    const result: any[] = [];
+    
+    // 国内：每个momentum类型取1-2条，总共5条
+    result.push(...domesticGroups.rising.slice(0, 2));
+    result.push(...domesticGroups.stable.slice(0, 2));
+    result.push(...domesticGroups.cooling.slice(0, 1));
+    
+    // 国际：每个momentum类型取1-2条，总共5条
+    result.push(...internationalGroups.rising.slice(0, 2));
+    result.push(...internationalGroups.stable.slice(0, 2));
+    result.push(...internationalGroups.cooling.slice(0, 1));
+    
+    console.log(`[Trends] 选取国内: ${result.filter(t => /[\u4e00-\u9fff]/.test(t.title)).length} 条, 国际: ${result.filter(t => !/[\u4e00-\u9fff]/.test(t.title)).length} 条`);
+    
+    // 4. 限制总数为10条（防止超出）
+    return result.slice(0, 10);
   }
   
   /**
@@ -211,40 +256,94 @@ export class FrontendAdapter {
   }
   
   /**
-   * 提取风险与机遇（各2条，总共4条）
+   * 提取风险与机遇（国内外各有，总共6条）
    */
   private static extractRisksOpportunities(report: any): any[] {
     const items: any[] = [];
     
-    // 从新闻中提取风险（2条）
-    const risks = report.rawData
-      .filter((item: any) => item.sentiment?.label === 'negative' && item.significance >= 7)
+    // 分类所有新闻
+    const domesticNews = report.rawData.filter((item: any) => /[\u4e00-\u9fff]/.test(item.title));
+    const internationalNews = report.rawData.filter((item: any) => !/[\u4e00-\u9fff]/.test(item.title));
+    
+    // 从国内新闻中提取风险和机遇（降低门槛，按significance排序）
+    const domesticRisks = domesticNews
+      .filter((item: any) => item.sentiment?.label === 'negative' || item.significance >= 7)
+      .sort((a: any, b: any) => b.significance - a.significance)
+      .slice(0, 1);
+    const domesticOpportunities = domesticNews
+      .filter((item: any) => item.sentiment?.label === 'positive' || item.significance >= 7)
+      .sort((a: any, b: any) => b.significance - a.significance)
       .slice(0, 2);
     
-    // 从新闻中提取机遇（2条）
-    const opportunities = report.rawData
-      .filter((item: any) => item.sentiment?.label === 'positive' && item.significance >= 7)
+    // 如果国内机遇不足，从高significance的新闻中补充
+    if (domesticOpportunities.length < 2) {
+      const additional = domesticNews
+        .filter((item: any) => !domesticOpportunities.includes(item) && !domesticRisks.includes(item))
+        .sort((a: any, b: any) => b.significance - a.significance)
+        .slice(0, 2 - domesticOpportunities.length);
+      domesticOpportunities.push(...additional);
+    }
+    
+    // 从国际新闻中提取风险和机遇
+    const internationalRisks = internationalNews
+      .filter((item: any) => item.sentiment?.label === 'negative' || item.significance >= 7)
+      .sort((a: any, b: any) => b.significance - a.significance)
+      .slice(0, 1);
+    const internationalOpportunities = internationalNews
+      .filter((item: any) => item.sentiment?.label === 'positive' || item.significance >= 7)
+      .sort((a: any, b: any) => b.significance - a.significance)
       .slice(0, 2);
     
-    // 添加风险
-    risks.forEach((item: any, idx: number) => {
+    // 如果国际机遇不足，从高significance的新闻中补充
+    if (internationalOpportunities.length < 2) {
+      const additional = internationalNews
+        .filter((item: any) => !internationalOpportunities.includes(item) && !internationalRisks.includes(item))
+        .sort((a: any, b: any) => b.significance - a.significance)
+        .slice(0, 2 - internationalOpportunities.length);
+      internationalOpportunities.push(...additional);
+    }
+    
+    // 添加国内风险
+    domesticRisks.forEach((item: any, idx: number) => {
       items.push({
-        id: `risk-${idx}`,
+        id: `risk-domestic-${idx}`,
         kind: 'risk',
         title: item.title,
         detail: item.summary || item.content?.substring(0, 200) || ''
       });
     });
     
-    // 添加机遇
-    opportunities.forEach((item: any, idx: number) => {
+    // 添加国际风险
+    internationalRisks.forEach((item: any, idx: number) => {
       items.push({
-        id: `opportunity-${idx}`,
+        id: `risk-international-${idx}`,
+        kind: 'risk',
+        title: item.title,
+        detail: item.summary || item.content?.substring(0, 200) || ''
+      });
+    });
+    
+    // 添加国内机遇
+    domesticOpportunities.forEach((item: any, idx: number) => {
+      items.push({
+        id: `opportunity-domestic-${idx}`,
         kind: 'opportunity',
         title: item.title,
         detail: item.summary || item.content?.substring(0, 200) || ''
       });
     });
+    
+    // 添加国际机遇
+    internationalOpportunities.forEach((item: any, idx: number) => {
+      items.push({
+        id: `opportunity-international-${idx}`,
+        kind: 'opportunity',
+        title: item.title,
+        detail: item.summary || item.content?.substring(0, 200) || ''
+      });
+    });
+    
+    console.log(`[RisksOpportunities] 国内: ${domesticRisks.length + domesticOpportunities.length} 条 (风险${domesticRisks.length}, 机遇${domesticOpportunities.length}), 国际: ${internationalRisks.length + internationalOpportunities.length} 条 (风险${internationalRisks.length}, 机遇${internationalOpportunities.length})`);
     
     return items;
   }
