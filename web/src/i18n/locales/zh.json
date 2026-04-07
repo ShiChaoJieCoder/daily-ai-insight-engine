@@ -29,7 +29,10 @@
     "articles": "篇文章",
     "pipeline": "流水线",
     "insufficientData": "数据不足 — 数据可能稀疏",
-    "momentum": "动量"
+    "momentum": "动量",
+    "riskOpportunityNoDetail": "暂无相关新闻正文。",
+    "expandDetail": "展开",
+    "collapseDetail": "收起"
   },
   "report": {
     "generatedAt": "生成时间",

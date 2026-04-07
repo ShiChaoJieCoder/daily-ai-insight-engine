@@ -638,6 +638,17 @@
   animation: ro-liquid-pop var(--motion-damping-slow) var(--motion-spring-bouncy);
 }
 
+/* 无正文：不要用 line-clamp 省略号冒充内容 */
+.ro-list__detail--placeholder {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+  max-height: none;
+  font-style: italic;
+  color: var(--text-muted);
+  opacity: 0.92;
+}
+
 .ro-list__expand-btn {
   align-self: flex-start;
   margin-top: var(--space-2);
