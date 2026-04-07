@@ -11,7 +11,6 @@
     "generate-report": "tsx src/scripts/generate-report.ts",
     "test": "vitest"
   },
-  "packageManager": "yarn@4.0.0",
   "keywords": [
     "ai",
     "news",

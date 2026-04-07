@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "description": "AI舆情分析日报系统 - 从每日新闻信息中提取结构化洞察",
-  "packageManager": "yarn@4.0.0",
   "workspaces": [
     "backend",
     "web"
