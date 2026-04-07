@@ -6,7 +6,16 @@ dotenv.config({ path: './config/.env' });
 
 // 数据源配置
 export const DATA_SOURCES: DataSource[] = [
-  // 技术深度型
+  // 国内中文媒体（优先级最高）
+  {
+    name: '中文AI资讯',
+    type: 'rss',
+    url: 'https://www.jiqizhixin.com/rss',
+    parser: 'chinese',
+    enabled: true
+  },
+  
+  // 技术深度型（国际）
   {
     name: 'Hacker News',
     type: 'api',
@@ -22,7 +31,7 @@ export const DATA_SOURCES: DataSource[] = [
     enabled: true
   },
   
-  // 行业资讯型
+  // 行业资讯型（国际）
   {
     name: 'TechCrunch AI',
     type: 'rss',
@@ -38,7 +47,7 @@ export const DATA_SOURCES: DataSource[] = [
     enabled: true
   },
   
-  // 社区讨论型
+  // 社区讨论型（国际）
   {
     name: 'Reddit r/MachineLearning',
     type: 'api',
@@ -70,7 +79,7 @@ export const config: Config = {
   server: {
     port: parseInt(process.env.PORT || '3000'),
     cors: {
-      origin: process.env.CORS_ORIGIN || 'http://localhost:5173'
+      origin: process.env.CORS_ORIGIN || '*'  // 允许所有来源（开发环境）
     }
   }
 };

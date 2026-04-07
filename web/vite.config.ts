@@ -4,4 +4,9 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    port: 5173,
+    strictPort: true, // 如果端口被占用则报错，而不是自动尝试下一个端口
+    host: true, // 监听所有地址
+  },
 })

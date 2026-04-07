@@ -11,6 +11,7 @@ export interface RawNewsItem {
   source: string;
   publishDate: Date;
   author?: string;
+  language?: 'zh' | 'en';  // 语言标识
 }
 
 // ========== 结构化数据类型 ==========

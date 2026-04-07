@@ -18,7 +18,18 @@
     "overview": "概览",
     "hotTopics": "热点话题",
     "trends": "趋势分析",
-    "analysis": "深度分析"
+    "analysis": "深度分析",
+    "snapshot": "快照",
+    "hotspots": "热点",
+    "charts": "图表",
+    "deepDive": "深度洞察",
+    "risksOpportunities": "风险与机遇",
+    "risk": "风险",
+    "opportunity": "机遇",
+    "articles": "篇文章",
+    "pipeline": "流水线",
+    "insufficientData": "数据不足 — 数据可能稀疏",
+    "momentum": "动量"
   },
   "report": {
     "generatedAt": "生成时间",
@@ -52,7 +63,23 @@
     "release": "产品发布",
     "funding": "融资事件",
     "regulation": "监管政策",
-    "discussion": "行业讨论"
+    "discussion": "行业讨论",
+    "source": "来源",
+    "publishDate": "发布时间",
+    "category": "分类",
+    "tags": "标签",
+    "entities": "实体",
+    "companies": "公司",
+    "products": "产品",
+    "technologies": "技术",
+    "people": "人物",
+    "impact": "影响分析",
+    "impactLevel": "影响级别",
+    "timeline": "时间线",
+    "immediate": "即时",
+    "shortTerm": "短期",
+    "longTerm": "长期",
+    "stakeholders": "利益相关者"
   },
   "trends": {
     "title": "趋势判断",
@@ -67,11 +94,34 @@
     "sentiment": "情感趋势",
     "companies": "热门公司",
     "technologies": "热门技术",
-    "mentions": "次提及"
+    "mentions": "次提及",
+    "count": "数量",
+    "percentage": "占比"
+  },
+  "category": {
+    "research": "研究",
+    "product": "产品",
+    "funding": "融资",
+    "policy": "政策",
+    "discussion": "讨论"
+  },
+  "news": {
+    "title": "新闻标题",
+    "content": "内容",
+    "summary": "摘要",
+    "fullText": "全文",
+    "readMore": "阅读更多",
+    "relatedNews": "相关新闻",
+    "noNews": "暂无新闻"
   },
   "footer": {
     "copyright": "© 2026 AI舆情分析日报系统。保留所有权利。",
     "generatedBy": "由AI自动生成",
     "forReference": "仅供参考"
+  },
+  "region": {
+    "all": "全部",
+    "domestic": "国内",
+    "international": "国外"
   }
 }

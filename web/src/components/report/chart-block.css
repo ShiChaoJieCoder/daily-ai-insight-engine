@@ -1,21 +1,31 @@
 .chart-block {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1rem 1rem 0.5rem;
+  border: var(--border-thin) solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-5) var(--space-3);
   text-align: left;
+  transition:
+    border-color var(--motion-damping-base) var(--motion-spring-gentle),
+    box-shadow var(--motion-damping-base) var(--motion-spring-gentle),
+    transform var(--motion-damping-fast) var(--motion-spring-snappy);
+}
+
+.chart-block:hover {
+  border-color: color-mix(in oklch, var(--border) 80%, var(--accent) 20%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px oklch(0.2 0.02 35 / 0.08);
 }
 
 .chart-block__title {
   font-family: var(--font-ui);
-  font-size: 0.95rem;
+  font-size: var(--text-default);
   font-weight: 600;
   color: var(--text);
-  margin: 0 0 0.75rem;
+  margin: 0 0 var(--space-4);
   letter-spacing: -0.02em;
 }
 
 .chart-block__canvas {
   width: 100%;
-  min-height: 260px;
+  min-height: var(--chart-height);
 }

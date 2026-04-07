@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAISON ÉLÉGANCE - Luxury Redefined</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'display': ['Bodoni Moda', 'serif'],
+            'sans': ['Jost', 'sans-serif'],
+          },
+          colors: {
+            'luxury-dark': '#1C1917',
+            'luxury-gray': '#44403C',
+            'luxury-gold': '#CA8A04',
+            'luxury-bg': '#FAFAF9',
+            'luxury-text': '#0C0A09',
+          },
+          animation: {
+            'float': 'float 6s ease-in-out infinite',
+            'glow': 'glow 3s ease-in-out infinite',
+            'shimmer': 'shimmer 2s linear infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+            glow: {
+              '0%, 100%': { opacity: '0.5' },
+              '50%': { opacity: '1' },
+            },
+            shimmer: {
+              '0%': { backgroundPosition: '-1000px 0' },
+              '100%': { backgroundPosition: '1000px 0' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  
+  <style>
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    
+    .liquid-glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .liquid-glass-light {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+    
+    .gradient-gold {
+      background: linear-gradient(135deg, #CA8A04 0%, #FDE047 50%, #CA8A04 100%);
+      background-size: 200% 200%;
+      animation: shimmer 3s linear infinite;
+    }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #CA8A04, #FDE047, #CA8A04);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }
+    
+    .morphing-blob {
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      animation: morph 8s ease-in-out infinite;
+    }
+    
+    @keyframes morph {
+      0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+      25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+      50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+      75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+    }
+    
+    .scroll-indicator {
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(10px); }
+    }
+    
+    .parallax {
+      transition: transform 0.3s ease-out;
+    }
+    
+    .hover-lift {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hover-lift:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px -10px rgba(202, 138, 4, 0.3);
+    }
+    
+    .horizontal-scroll {
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .horizontal-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .scroll-snap-item {
+      scroll-snap-align: center;
+    }
+  </style>
+</head>
+
+<body class="bg-luxury-bg text-luxury-text font-sans antialiased overflow-x-hidden">
+  
+  <!-- Floating Navigation -->
+  <nav class="fixed top-4 left-4 right-4 z-50 transition-all duration-300">
+    <div class="liquid-glass-light rounded-full px-6 py-3 flex items-center justify-between max-w-7xl mx-auto">
+      <div class="font-display text-2xl font-bold tracking-tight">
+        <span class="text-gradient">MAISON</span>
+      </div>
+      
+      <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+        <a href="#collection" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Collection</a>
+        <a href="#story" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Story</a>
+        <a href="#craft" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Craft</a>
+        <a href="#membership" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Membership</a>
+      </div>
+      
+      <button class="bg-luxury-dark text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-luxury-gold transition-all duration-200 cursor-pointer">
+        Explore
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-luxury-dark">
+    <!-- Animated Background Blobs -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="morphing-blob absolute top-20 left-10 w-96 h-96 bg-luxury-gold opacity-10 blur-3xl"></div>
+      <div class="morphing-blob absolute bottom-20 right-10 w-96 h-96 bg-luxury-gold opacity-10 blur-3xl" style="animation-delay: 2s;"></div>
+    </div>
+    
+    <div class="relative z-10 text-center px-4 pt-24">
+      <div class="inline-block mb-6">
+        <span class="liquid-glass text-luxury-gold px-6 py-2 rounded-full text-sm font-medium tracking-wider">
+          SPRING COLLECTION 2026
+        </span>
+      </div>
+      
+      <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-6 leading-tight">
+        Luxury<br/>
+        <span class="text-gradient">Redefined</span>
+      </h1>
+      
+      <p class="text-white/70 text-lg md:text-xl max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+        Experience the pinnacle of craftsmanship where timeless elegance meets contemporary sophistication
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <button class="gradient-gold text-luxury-dark px-8 py-4 rounded-full font-medium hover:shadow-2xl transition-all duration-300 cursor-pointer">
+          Discover Collection
+        </button>
+        <button class="liquid-glass text-white px-8 py-4 rounded-full font-medium hover:bg-white/10 transition-all duration-200 cursor-pointer">
+          Watch Film
+        </button>
+      </div>
+      
+      <div class="mt-20 scroll-indicator">
+        <svg class="w-6 h-6 mx-auto text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- Horizontal Scroll Journey -->
+  <section id="collection" class="py-24 bg-luxury-bg">
+    <div class="max-w-7xl mx-auto px-4 mb-12">
+      <h2 class="font-display text-5xl md:text-6xl font-bold text-center mb-4">
+        The <span class="text-gradient">Journey</span>
+      </h2>
+      <p class="text-center text-luxury-gray text-lg max-w-2xl mx-auto">
+        Scroll through our curated selection of masterpieces
+      </p>
+    </div>
+    
+    <div class="horizontal-scroll flex gap-8 overflow-x-auto px-4 md:px-8 pb-8">
+      <!-- Product Card 1 -->
+      <div class="scroll-snap-item flex-shrink-0 w-80 md:w-96">
+        <div class="liquid-glass-light rounded-3xl p-8 hover-lift cursor-pointer">
+          <div class="aspect-square bg-gradient-to-br from-luxury-gold/20 to-luxury-dark/10 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+            <svg class="w-32 h-32 text-luxury-gold animate-float" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
+            </svg>
+          </div>
+          <div class="space-y-2">
+            <span class="text-luxury-gold text-sm font-medium tracking-wider">SIGNATURE</span>
+            <h3 class="font-display text-2xl font-bold">Eternal Elegance</h3>
+            <p class="text-luxury-gray text-sm leading-relaxed">
+              Handcrafted with precision, each piece tells a story of timeless sophistication
+            </p>
+            <div class="pt-4 flex items-center justify-between">
+              <span class="font-display text-2xl font-bold">$12,500</span>
+              <button class="text-luxury-gold hover:text-luxury-dark transition-colors duration-200 cursor-pointer">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Card 2 -->
+      <div class="scroll-snap-item flex-shrink-0 w-80 md:w-96">
+        <div class="liquid-glass-light rounded-3xl p-8 hover-lift cursor-pointer">
+          <div class="aspect-square bg-gradient-to-br from-luxury-dark/10 to-luxury-gold/20 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+            <svg class="w-32 h-32 text-luxury-gold animate-float" style="animation-delay: 1s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+            </svg>
+          </div>
+          <div class="space-y-2">
+            <span class="text-luxury-gold text-sm font-medium tracking-wider">LIMITED</span>
+            <h3 class="font-display text-2xl font-bold">Royal Heritage</h3>
+            <p class="text-luxury-gray text-sm leading-relaxed">
+              A masterpiece of artisanal craftsmanship, limited to 50 pieces worldwide
+            </p>
+            <div class="pt-4 flex items-center justify-between">
+              <span class="font-display text-2xl font-bold">$24,800</span>
+              <button class="text-luxury-gold hover:text-luxury-dark transition-colors duration-200 cursor-pointer">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Card 3 -->
+      <div class="scroll-snap-item flex-shrink-0 w-80 md:w-96">
+        <div class="liquid-glass-light rounded-3xl p-8 hover-lift cursor-pointer">
+          <div class="aspect-square bg-gradient-to-br from-luxury-gold/20 to-luxury-dark/10 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+            <svg class="w-32 h-32 text-luxury-gold animate-float" style="animation-delay: 2s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+            </svg>
+          </div>
+          <div class="space-y-2">
+            <span class="text-luxury-gold text-sm font-medium tracking-wider">EXCLUSIVE</span>
+            <h3 class="font-display text-2xl font-bold">Diamond Essence</h3>
+            <p class="text-luxury-gray text-sm leading-relaxed">
+              Adorned with ethically sourced diamonds, a symbol of eternal beauty
+            </p>
+            <div class="pt-4 flex items-center justify-between">
+              <span class="font-display text-2xl font-bold">$45,000</span>
+              <button class="text-luxury-gold hover:text-luxury-dark transition-colors duration-200 cursor-pointer">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Card 4 -->
+      <div class="scroll-snap-item flex-shrink-0 w-80 md:w-96">
+        <div class="liquid-glass-light rounded-3xl p-8 hover-lift cursor-pointer">
+          <div class="aspect-square bg-gradient-to-br from-luxury-dark/10 to-luxury-gold/20 rounded-2xl mb-6 flex items-center justify-center overflow-hidden">
+            <svg class="w-32 h-32 text-luxury-gold animate-float" style="animation-delay: 3s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div class="space-y-2">
+            <span class="text-luxury-gold text-sm font-medium tracking-wider">BESPOKE</span>
+            <h3 class="font-display text-2xl font-bold">Custom Creation</h3>
+            <p class="text-luxury-gray text-sm leading-relaxed">
+              Collaborate with our artisans to create your unique masterpiece
+            </p>
+            <div class="pt-4 flex items-center justify-between">
+              <span class="font-display text-2xl font-bold">On Request</span>
+              <button class="text-luxury-gold hover:text-luxury-dark transition-colors duration-200 cursor-pointer">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brand Story -->
+  <section id="story" class="py-32 bg-luxury-dark text-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div class="space-y-8">
+          <div class="inline-block">
+            <span class="liquid-glass text-luxury-gold px-6 py-2 rounded-full text-sm font-medium tracking-wider">
+              OUR HERITAGE
+            </span>
+          </div>
+          <h2 class="font-display text-5xl md:text-6xl font-bold leading-tight">
+            A Legacy of<br/>
+            <span class="text-gradient">Excellence</span>
+          </h2>
+          <p class="text-white/70 text-lg leading-relaxed">
+            Since 1847, Maison Élégance has been synonymous with unparalleled craftsmanship and timeless design. Each piece is a testament to our unwavering commitment to perfection, created by master artisans who have honed their skills across generations.
+          </p>
+          <p class="text-white/70 text-lg leading-relaxed">
+            We believe that true luxury transcends trends—it is eternal, sophisticated, and deeply personal. Our creations are not merely possessions; they are heirlooms, destined to be cherished for lifetimes.
+          </p>
+          <div class="grid grid-cols-3 gap-8 pt-8">
+            <div>
+              <div class="font-display text-4xl font-bold text-luxury-gold mb-2">175+</div>
+              <div class="text-white/60 text-sm">Years of Heritage</div>
+            </div>
+            <div>
+              <div class="font-display text-4xl font-bold text-luxury-gold mb-2">50</div>
+              <div class="text-white/60 text-sm">Master Artisans</div>
+            </div>
+            <div>
+              <div class="font-display text-4xl font-bold text-luxury-gold mb-2">12K+</div>
+              <div class="text-white/60 text-sm">Satisfied Clients</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <div class="liquid-glass rounded-3xl p-12 aspect-square flex items-center justify-center">
+            <svg class="w-64 h-64 text-luxury-gold opacity-50 animate-float" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Craftsmanship -->
+  <section id="craft" class="py-32 bg-luxury-bg">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-20">
+        <h2 class="font-display text-5xl md:text-6xl font-bold mb-6">
+          The Art of <span class="text-gradient">Craftsmanship</span>
+        </h2>
+        <p class="text-luxury-gray text-lg max-w-2xl mx-auto">
+          Every creation undergoes a meticulous process, blending traditional techniques with modern innovation
+        </p>
+      </div>
+      
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="liquid-glass-light rounded-3xl p-8 hover-lift cursor-pointer">
+          <div class="w-16 h-16 bg-luxury-gold/10 rounded-2xl flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold mb-4">Design</h3>
+          <p class="text-luxury-gray leading-relaxed">
+            Our designers sketch each piece by hand, ensuring every curve and detail reflects our vision of perfection
+          </p>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="liquid-glass-light rounded-3xl p-8 hover-lift cursor-pointer">
+          <div class="w-16 h-16 bg-luxury-gold/10 rounded-2xl flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold mb-4">Craft</h3>
+          <p class="text-luxury-gray leading-relaxed">
+            Master artisans bring designs to life using time-honored techniques passed down through generations
+          </p>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="liquid-glass-light rounded-3xl p-8 hover-lift cursor-pointer">
+          <div class="w-16 h-16 bg-luxury-gold/10 rounded-2xl flex items-center justify-center mb-6">
+            <svg class="w-8 h-8 text-luxury-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="font-display text-2xl font-bold mb-4">Perfect</h3>
+          <p class="text-luxury-gray leading-relaxed">
+            Each piece undergoes rigorous quality control, ensuring it meets our exacting standards of excellence
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Exclusive Membership CTA -->
+  <section id="membership" class="py-32 bg-luxury-dark text-white relative overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="morphing-blob absolute top-0 right-0 w-96 h-96 bg-luxury-gold opacity-10 blur-3xl"></div>
+      <div class="morphing-blob absolute bottom-0 left-0 w-96 h-96 bg-luxury-gold opacity-10 blur-3xl" style="animation-delay: 4s;"></div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+      <div class="inline-block mb-6">
+        <span class="liquid-glass text-luxury-gold px-6 py-2 rounded-full text-sm font-medium tracking-wider">
+          INVITATION ONLY
+        </span>
+      </div>
+      
+      <h2 class="font-display text-5xl md:text-7xl font-bold mb-8 leading-tight">
+        Join the Circle of<br/>
+        <span class="text-gradient">Exclusivity</span>
+      </h2>
+      
+      <p class="text-white/70 text-xl leading-relaxed mb-12 max-w-2xl mx-auto">
+        Become a member of our exclusive community and unlock access to private collections, bespoke services, and invitation-only events
+      </p>
+      
+      <div class="grid md:grid-cols-3 gap-8 mb-16">
+        <div class="liquid-glass rounded-2xl p-6">
+          <svg class="w-12 h-12 text-luxury-gold mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <h3 class="font-display text-xl font-bold mb-2">Private Access</h3>
+          <p class="text-white/60 text-sm">Exclusive collections before public release</p>
+        </div>
+        
+        <div class="liquid-glass rounded-2xl p-6">
+          <svg class="w-12 h-12 text-luxury-gold mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+          </svg>
+          <h3 class="font-display text-xl font-bold mb-2">Bespoke Service</h3>
+          <p class="text-white/60 text-sm">Personalized consultations with our artisans</p>
+        </div>
+        
+        <div class="liquid-glass rounded-2xl p-6">
+          <svg class="w-12 h-12 text-luxury-gold mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z"></path>
+          </svg>
+          <h3 class="font-display text-xl font-bold mb-2">VIP Events</h3>
+          <p class="text-white/60 text-sm">Invitations to exclusive gatherings worldwide</p>
+        </div>
+      </div>
+      
+      <button class="gradient-gold text-luxury-dark px-12 py-5 rounded-full font-medium text-lg hover:shadow-2xl transition-all duration-300 cursor-pointer">
+        Request Invitation
+      </button>
+      
+      <p class="text-white/40 text-sm mt-6">Limited to 500 members worldwide</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-luxury-dark text-white py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-12 mb-12">
+        <div>
+          <div class="font-display text-3xl font-bold mb-4">
+            <span class="text-gradient">MAISON</span>
+          </div>
+          <p class="text-white/60 text-sm leading-relaxed">
+            Crafting timeless elegance since 1847
+          </p>
+        </div>
+        
+        <div>
+          <h4 class="font-display text-lg font-bold mb-4">Explore</h4>
+          <ul class="space-y-2 text-white/60 text-sm">
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Collections</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Bespoke</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Heritage</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Ateliers</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-display text-lg font-bold mb-4">Services</h4>
+          <ul class="space-y-2 text-white/60 text-sm">
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Membership</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Concierge</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Care Guide</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Authentication</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="font-display text-lg font-bold mb-4">Connect</h4>
+          <ul class="space-y-2 text-white/60 text-sm">
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Boutiques</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Contact</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Careers</a></li>
+            <li><a href="#" class="hover:text-luxury-gold transition-colors duration-200 cursor-pointer">Press</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-white/40 text-sm">© 2026 Maison Élégance. All rights reserved.</p>
+        <div class="flex gap-6 mt-4 md:mt-0">
+          <a href="#" class="text-white/40 hover:text-luxury-gold transition-colors duration-200 cursor-pointer">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+          <a href="#" class="text-white/40 hover:text-luxury-gold transition-colors duration-200 cursor-pointer">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
+              <path d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </a>
+          <a href="#" class="text-white/40 hover:text-luxury-gold transition-colors duration-200 cursor-pointer">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Parallax effect on scroll
+    document.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const parallaxElements = document.querySelectorAll('.parallax');
+      
+      parallaxElements.forEach(el => {
+        const speed = el.dataset.speed || 0.5;
+        el.style.transform = `translateY(${scrolled * speed}px)`;
+      });
+    });
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
