@@ -30,7 +30,12 @@ import { ScrambleText, GradientText, RevealText } from '../components/text-effec
 import { ParticleMorphSystem } from '../components/effects'
 import '../liquid-glass-theme.css'
 import { useReportStore } from '../store/reportStore'
-import { stripMarkdown, formatContent } from '../utils/markdown'
+import {
+  stripMarkdown,
+  formatContent,
+  normalizeDetailPlainText,
+  RISK_OPPORTUNITY_EXPAND_MIN_CHARS,
+} from '../utils/markdown'
 import { tagWithRegion } from '../utils/region'
 import type { Region } from '../types/report'
 import './dashboard.css'
@@ -319,7 +324,10 @@ export function Dashboard() {
                 <ul className="ro-list">
                   {report.risks_opportunities.map((ro) => {
                     const isChinese = /[\u4e00-\u9fff]/.test(ro.title);
-                    const isExpanded = expandedRoId === ro.id
+                    const { text: detailText, hasSubstance } = normalizeDetailPlainText(ro.detail);
+                    const showExpand =
+                      hasSubstance && detailText.length > RISK_OPPORTUNITY_EXPAND_MIN_CHARS;
+                    const isExpanded = showExpand && expandedRoId === ro.id;
                     return (
                       <li
                         key={ro.id}
@@ -352,15 +360,23 @@ export function Dashboard() {
                             )}
                             {stripMarkdown(ro.title)}
                           </h3>
-                          <p className="ro-list__detail">{stripMarkdown(ro.detail)}</p>
-                          <button
-                            type="button"
-                            className="ro-list__expand-btn"
-                            aria-expanded={isExpanded}
-                            onClick={() => setExpandedRoId(isExpanded ? null : ro.id)}
-                          >
-                            {isExpanded ? '收起' : '展开'}
-                          </button>
+                          {hasSubstance ? (
+                            <p className="ro-list__detail">{detailText}</p>
+                          ) : (
+                            <p className="ro-list__detail ro-list__detail--placeholder" role="status">
+                              {t('dashboard.riskOpportunityNoDetail')}
+                            </p>
+                          )}
+                          {showExpand ? (
+                            <button
+                              type="button"
+                              className="ro-list__expand-btn"
+                              aria-expanded={isExpanded}
+                              onClick={() => setExpandedRoId(isExpanded ? null : ro.id)}
+                            >
+                              {isExpanded ? t('dashboard.collapseDetail') : t('dashboard.expandDetail')}
+                            </button>
+                          ) : null}
                         </div>
                       </li>
                     );

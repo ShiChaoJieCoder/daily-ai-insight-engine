@@ -29,7 +29,10 @@
     "articles": "articles",
     "pipeline": "Pipeline",
     "insufficientData": "Insufficient data for this window — figures may be sparse",
-    "momentum": "Momentum"
+    "momentum": "Momentum",
+    "riskOpportunityNoDetail": "No news body available for this item.",
+    "expandDetail": "Expand",
+    "collapseDetail": "Collapse"
   },
   "report": {
     "generatedAt": "Generated at",

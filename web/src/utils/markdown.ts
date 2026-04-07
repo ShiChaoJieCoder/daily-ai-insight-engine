@@ -39,6 +39,26 @@ export function stripMarkdown(text: string): string {
 }
 
 /**
+ * 风险/机遇等字段：空串、纯空白、或仅用 … / . / - 等占位的内容视为「无正文」
+ */
+export function normalizeDetailPlainText(raw: string | undefined | null): {
+  text: string;
+  hasSubstance: boolean;
+} {
+  const plain = stripMarkdown(raw ?? '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!plain) return { text: '', hasSubstance: false };
+  if (/^[\s.·⋯…\-—–_]+$/u.test(plain)) return { text: '', hasSubstance: false };
+  if (/^\.{1,3}$/.test(plain)) return { text: '', hasSubstance: false };
+  if (/^(…|⋯|\.{2,}|。{2,})$/u.test(plain)) return { text: '', hasSubstance: false };
+  return { text: plain, hasSubstance: true };
+}
+
+/** 超过约两行后再显示「展开」才有意义 */
+export const RISK_OPPORTUNITY_EXPAND_MIN_CHARS = 120;
+
+/**
  * 智能格式化内容 - 提取关键信息并美化排版
  */
 export function formatContent(text: string): {
