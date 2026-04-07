@@ -17,6 +17,7 @@
 - 🤖 **AI智能分析**：使用GPT-3.5/GPT-4进行信息提取、情感分析、影响评估
 - 📊 **多维度可视化**：图表展示事件分布、情感趋势、热门话题
 - 📝 **专业报告生成**：自动生成包含热点分析、趋势判断的日报
+- 🌐 **中英文切换**：一键切换界面语言，支持简体中文和英文
 
 ### 应用场景
 
@@ -38,6 +39,7 @@
 - SCSS（样式）
 - Recharts 3.x（数据可视化）
 - Radix UI（无障碍组件）
+- i18next（国际化）
 
 **后端**
 - Node.js 20.x + TypeScript 5.x
@@ -406,6 +408,9 @@ yarn test:e2e
 - [Prompt设计](./docs/ai-usage/01-prompt-design.md)
 - [错误处理](./docs/ai-usage/02-error-handling.md)
 - [成本分析](./docs/ai-usage/03-cost-analysis.md)
+
+### 功能文档
+- [国际化指南](./docs/features/i18n-guide.md)
 
 ### 示例文档
 - [示例报告](./docs/examples/sample-report.md)
