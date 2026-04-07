@@ -1,5 +1,6 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { ChevronDown, Link2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import type { Hotspot } from '../../types/report'
 import './hotspot-card.css'
 
@@ -8,12 +9,17 @@ type Props = {
 }
 
 export function HotspotCard({ hotspot }: Props) {
+  const { t } = useTranslation()
+  
   return (
     <Collapsible.Root className="hotspot">
       <div className="hotspot__header">
         <h3 className="hotspot__title">{hotspot.title}</h3>
-        <Collapsible.Trigger className="hotspot__trigger">
-          <span className="hotspot__trigger-text">Details</span>
+        <Collapsible.Trigger 
+          className="hotspot__trigger"
+          aria-label={`${t('report.details')}: ${hotspot.title}`}
+        >
+          <span className="hotspot__trigger-text">{t('report.details')}</span>
           <ChevronDown className="hotspot__chevron" aria-hidden />
         </Collapsible.Trigger>
       </div>
@@ -22,7 +28,7 @@ export function HotspotCard({ hotspot }: Props) {
         <div className="hotspot__meta">
           <span className="hotspot__meta-label">
             <Link2 size={14} aria-hidden />
-            Related article IDs
+            {t('report.relatedArticleIds')}
           </span>
           <ul className="hotspot__ids">
             {hotspot.related_article_ids.map((id) => (

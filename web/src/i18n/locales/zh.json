@@ -4,6 +4,7 @@
     "loading": "加载中...",
     "error": "错误",
     "noData": "暂无数据",
+    "noItems": "暂无内容",
     "refresh": "刷新",
     "language": "语言"
   },
@@ -18,17 +19,33 @@
     "overview": "概览",
     "hotTopics": "热点话题",
     "trends": "趋势分析",
-    "analysis": "深度分析"
+    "analysis": "深度分析",
+    "tabs": {
+      "snapshot": "快照",
+      "hotspots": "热点",
+      "trends": "趋势",
+      "charts": "图表"
+    },
+    "sections": {
+      "deepDive": "深度分析",
+      "risksOpportunities": "风险与机遇"
+    }
   },
   "report": {
     "generatedAt": "生成时间",
     "dataSources": "数据来源",
     "newsCount": "新闻数量",
+    "articles": "篇文章",
+    "article": "篇文章",
     "date": "日期",
     "summary": "摘要",
     "details": "详情",
     "viewMore": "查看更多",
-    "collapse": "收起"
+    "collapse": "收起",
+    "pipeline": "处理流程",
+    "pipelineTooltip": "报告JSON结构符合",
+    "insufficientData": "此时间窗口数据不足 — 数据可能较少。",
+    "relatedArticleIds": "相关文章ID"
   },
   "metrics": {
     "totalNews": "新闻总数",

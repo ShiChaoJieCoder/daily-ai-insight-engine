@@ -16,13 +16,19 @@ async function main() {
     // 验证配置
     validateConfig();
     
-    // 获取日期参数
+    // 获取参数
     const args = process.argv.slice(2);
     const dateArg = args.find(arg => arg.startsWith('--date='));
+    const langArg = args.find(arg => arg.startsWith('--lang='));
     const date = dateArg ? new Date(dateArg.split('=')[1]) : new Date();
+    const language = (langArg ? langArg.split('=')[1] : 'zh') as 'zh' | 'en';
+    
+    // 设置语言
+    dataFetcher.setLanguage(language);
     
     console.log(`\n========== 开始生成AI舆情分析日报 ==========`);
     console.log(`日期: ${date.toISOString().split('T')[0]}`);
+    console.log(`语言: ${language === 'zh' ? '中文' : 'English'}`);
     console.log(`时间: ${new Date().toLocaleString('zh-CN')}`);
     console.log(`===========================================\n`);
     
@@ -113,7 +119,7 @@ async function main() {
     // 10. 保存报告
     console.log(`[保存] 保存报告文件`);
     const dateStr = date.toISOString().split('T')[0];
-    await saveReport(report, dateStr);
+    await saveReport(report, dateStr, language);
     
     // 统计信息
     console.log(`\n========== 生成统计 ==========`);
@@ -138,20 +144,23 @@ async function main() {
 }
 
 // 保存报告
-async function saveReport(report: any, dateStr: string) {
+async function saveReport(report: any, dateStr: string, language: 'zh' | 'en' = 'zh') {
   const reportsDir = path.join(process.cwd(), 'data', 'reports');
   await fs.mkdir(reportsDir, { recursive: true });
   
+  // 文件名后缀
+  const suffix = language === 'zh' ? '-cn' : '-en';
+  
   // 保存JSON
-  const jsonFile = path.join(reportsDir, `${dateStr}-report.json`);
+  const jsonFile = path.join(reportsDir, `${dateStr}-report${suffix}.json`);
   await fs.writeFile(jsonFile, JSON.stringify(report, null, 2));
-  console.log(`  ✓ JSON报告已保存`);
+  console.log(`  ✓ JSON报告已保存: ${jsonFile}`);
   
   // 保存Markdown
   const mdContent = generateMarkdownReport(report);
-  const mdFile = path.join(reportsDir, `${dateStr}-report.md`);
+  const mdFile = path.join(reportsDir, `${dateStr}-report${suffix}.md`);
   await fs.writeFile(mdFile, mdContent);
-  console.log(`  ✓ Markdown报告已保存`);
+  console.log(`  ✓ Markdown报告已保存: ${mdFile}`);
 }
 
 // 生成Markdown报告

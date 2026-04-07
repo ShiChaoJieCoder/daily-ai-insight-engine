@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { Config, DataSource } from '../types/index.js';
 
 // 加载环境变量
-dotenv.config({ path: './config/.env' });
+dotenv.config();
 
 // 数据源配置
 export const DATA_SOURCES: DataSource[] = [
@@ -50,6 +50,9 @@ export const DATA_SOURCES: DataSource[] = [
 
 // 完整配置
 export const config: Config = {
+  // AI服务提供商配置
+  aiProvider: 'openai' as 'openai',
+  
   openai: {
     apiKey: process.env.OPENAI_API_KEY || '',
     organization: process.env.OPENAI_ORG_ID,
@@ -78,8 +81,10 @@ export const config: Config = {
 // 验证配置
 export function validateConfig(): void {
   if (!config.openai.apiKey) {
-    throw new Error('OPENAI_API_KEY is required');
+    console.warn('⚠ OPENAI_API_KEY is not set. Using mock data mode.');
+  } else {
+    console.log(`✓ Using OpenAI API`);
   }
   
-  console.log('✓ Configuration validated');
+  console.log(`✓ Configuration validated (AI Provider: ${config.aiProvider})`);
 }

@@ -6,8 +6,18 @@
  */
 
 import type { RawNewsItem, DataSource } from '../../types/index.js';
+import { getChineseMockData } from './mock-data-cn.js';
 
 export class DataFetcherService {
+  private language: 'zh' | 'en' = 'zh'; // 默认使用中文
+  
+  /**
+   * 设置语言
+   */
+  setLanguage(lang: 'zh' | 'en') {
+    this.language = lang;
+  }
+  
   /**
    * 获取新闻数据
    * 
@@ -20,9 +30,10 @@ export class DataFetcherService {
   async fetchNews(date: Date, sources: DataSource[]): Promise<RawNewsItem[]> {
     console.log(`[DataFetcher] 开始获取数据，日期: ${date.toISOString().split('T')[0]}`);
     console.log(`[DataFetcher] 数据源: ${sources.map(s => s.name).join(', ')}`);
+    console.log(`[DataFetcher] 语言: ${this.language}`);
     
-    // 使用mock数据演示
-    const mockData = this.getMockData();
+    // 根据语言选择mock数据
+    const mockData = this.language === 'zh' ? getChineseMockData() : this.getMockData();
     
     console.log(`[DataFetcher] 获取到 ${mockData.length} 条原始数据`);
     return mockData;

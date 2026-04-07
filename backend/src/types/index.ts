@@ -218,6 +218,7 @@ export interface AIResponse<T = any> {
 // ========== 配置类型 ==========
 
 export interface Config {
+  aiProvider: 'openai';
   openai: {
     apiKey: string;
     organization?: string;

@@ -4,6 +4,7 @@
     "loading": "Loading...",
     "error": "Error",
     "noData": "No data available",
+    "noItems": "No items to display",
     "refresh": "Refresh",
     "language": "Language"
   },
@@ -18,17 +19,33 @@
     "overview": "Overview",
     "hotTopics": "Hot Topics",
     "trends": "Trends",
-    "analysis": "Analysis"
+    "analysis": "Analysis",
+    "tabs": {
+      "snapshot": "Snapshot",
+      "hotspots": "Hotspots",
+      "trends": "Trends",
+      "charts": "Charts"
+    },
+    "sections": {
+      "deepDive": "Deep dive",
+      "risksOpportunities": "Risks & opportunities"
+    }
   },
   "report": {
     "generatedAt": "Generated at",
     "dataSources": "Data Sources",
     "newsCount": "News Count",
+    "articles": "articles",
+    "article": "article",
     "date": "Date",
     "summary": "Summary",
     "details": "Details",
     "viewMore": "View More",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "pipeline": "Pipeline",
+    "pipelineTooltip": "Report JSON shape matches",
+    "insufficientData": "Insufficient data for this window — figures may be sparse.",
+    "relatedArticleIds": "Related article IDs"
   },
   "metrics": {
     "totalNews": "Total News",

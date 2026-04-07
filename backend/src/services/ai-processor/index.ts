@@ -8,14 +8,20 @@ import { config } from '../../config/index.js';
 import { PROMPTS, fillPromptTemplate } from './prompts.js';
 import type { RawNewsItem, PartialNewsItem, NewsItem, AIResponse } from '../../types/index.js';
 
+interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
 export class AIProcessorService {
-  private openai: OpenAI;
+  private openai?: OpenAI;
   
   constructor() {
     this.openai = new OpenAI({
       apiKey: config.openai.apiKey,
       organization: config.openai.organization
     });
+    console.log('✓ 使用 OpenAI API');
   }
   
   /**
@@ -43,18 +49,18 @@ ID: ${item.url}
     
     try {
       // 调用AI
-      const response = await this.callOpenAI({
+      const response = await this.callAI({
         model: config.openai.models.light,
         messages: [
           { role: 'system', content: '你是一个专业的AI新闻分析助手。' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.3,
-        max_tokens: 2000
+        maxTokens: 2000
       });
       
       // 解析结果
-      const content = response.choices[0].message.content || '[]';
+      const content = response.content || '[]';
       const extracted = this.parseJSON(content);
       
       console.log(`[AI] 基础提取完成，成功 ${extracted.length} 条`);
@@ -103,18 +109,18 @@ ID: ${item.url}
     
     try {
       // 调用AI
-      const response = await this.callOpenAI({
+      const response = await this.callAI({
         model: config.openai.models.strong,
         messages: [
           { role: 'system', content: '你是一个资深的AI行业分析专家。' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.5,
-        max_tokens: 3000
+        maxTokens: 3000
       });
       
       // 解析结果
-      const content = response.choices[0].message.content || '[]';
+      const content = response.content || '[]';
       const analyzed = this.parseJSON(content);
       
       console.log(`[AI] 深度分析完成`);
@@ -173,16 +179,32 @@ ID: ${item.url}
   }
   
   /**
-   * 调用OpenAI API（带重试）
+   * 统一的AI调用接口（带重试）
    */
-  private async callOpenAI(
-    params: OpenAI.ChatCompletionCreateParams,
+  private async callAI(
+    params: {
+      model: string;
+      messages: ChatMessage[];
+      temperature?: number;
+      maxTokens?: number;
+    },
     retries: number = config.processing.maxRetries
-  ): Promise<OpenAI.ChatCompletion> {
+  ): Promise<{ content: string; usage?: any }> {
     for (let i = 0; i < retries; i++) {
       try {
-        const response = await this.openai.chat.completions.create(params);
-        return response;
+        if (!this.openai) throw new Error('OpenAI client not initialized');
+        
+        const response = await this.openai.chat.completions.create({
+          model: params.model,
+          messages: params.messages as any,
+          temperature: params.temperature,
+          max_tokens: params.maxTokens
+        });
+        
+        return {
+          content: response.choices[0].message.content || '',
+          usage: response.usage
+        };
       } catch (error: any) {
         console.error(`[AI] 调用失败 (尝试 ${i + 1}/${retries}):`, error.message);
         
@@ -206,19 +228,42 @@ ID: ${item.url}
       // 尝试直接解析
       return JSON.parse(content);
     } catch (error) {
-      // 尝试提取JSON部分
-      const jsonMatch = content.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        try {
-          return JSON.parse(jsonMatch[0]);
-        } catch (e) {
-          console.error('[AI] JSON解析失败:', content);
-          return [];
-        }
-      }
+      // 移除 markdown 代码块标记（支持多种格式）
+      let cleaned = content
+        .replace(/^```json\s*/gm, '')
+        .replace(/^```\s*/gm, '')
+        .replace(/```\s*$/gm, '')
+        .trim();
       
-      console.error('[AI] 无法提取JSON:', content);
-      return [];
+      try {
+        return JSON.parse(cleaned);
+      } catch (e) {
+        // 尝试提取JSON数组部分（更宽松的匹配）
+        const jsonMatch = cleaned.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          try {
+            return JSON.parse(jsonMatch[0]);
+          } catch (e2) {
+            // 最后尝试：查找第一个 [ 到最后一个 ]
+            const firstBracket = cleaned.indexOf('[');
+            const lastBracket = cleaned.lastIndexOf(']');
+            if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+              try {
+                const extracted = cleaned.substring(firstBracket, lastBracket + 1);
+                return JSON.parse(extracted);
+              } catch (e3) {
+                console.error('[AI] JSON解析失败，内容长度:', content.length);
+                return [];
+              }
+            }
+            console.error('[AI] JSON解析失败，无法提取数组');
+            return [];
+          }
+        }
+        
+        console.error('[AI] 无法提取JSON');
+        return [];
+      }
     }
   }
   

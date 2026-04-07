@@ -29,9 +29,15 @@ app.get('/api/health', (req, res) => {
 // 获取最新报告
 app.get('/api/reports/latest', async (req, res) => {
   try {
+    const lang = (req.query.lang as string) || 'zh';
+    const suffix = lang === 'zh' ? '-cn' : '-en';
+    
     const reportsDir = path.join(process.cwd(), 'data', 'reports');
     const files = await fs.readdir(reportsDir);
-    const jsonFiles = files.filter(f => f.endsWith('.json')).sort().reverse();
+    const jsonFiles = files
+      .filter(f => f.endsWith(`${suffix}.json`))
+      .sort()
+      .reverse();
     
     if (jsonFiles.length === 0) {
       return res.status(404).json({ error: '没有找到报告' });
@@ -51,7 +57,9 @@ app.get('/api/reports/latest', async (req, res) => {
 app.get('/api/reports/:date', async (req, res) => {
   try {
     const { date } = req.params;
-    const reportFile = path.join(process.cwd(), 'data', 'reports', `${date}-report.json`);
+    const lang = (req.query.lang as string) || 'zh';
+    const suffix = lang === 'zh' ? '-cn' : '-en';
+    const reportFile = path.join(process.cwd(), 'data', 'reports', `${date}-report${suffix}.json`);
     
     const content = await fs.readFile(reportFile, 'utf-8');
     const report = JSON.parse(content);
@@ -69,11 +77,16 @@ app.get('/api/reports/:date', async (req, res) => {
 // 生成新报告
 app.post('/api/reports/generate', async (req, res) => {
   try {
-    const { date: dateStr } = req.body;
+    const { date: dateStr, lang } = req.body;
     const date = dateStr ? new Date(dateStr) : new Date();
+    const language = (lang || 'zh') as 'zh' | 'en';
+    
+    // 设置语言
+    dataFetcher.setLanguage(language);
     
     console.log(`\n========== 开始生成日报 ==========`);
     console.log(`日期: ${date.toISOString().split('T')[0]}`);
+    console.log(`语言: ${language === 'zh' ? '中文' : 'English'}`);
     
     // 1. 数据获取
     const rawData = await dataFetcher.fetchNews(date, config.dataSources);
@@ -134,7 +147,7 @@ app.post('/api/reports/generate', async (req, res) => {
     
     // 10. 保存报告
     const dateStr2 = date.toISOString().split('T')[0];
-    await saveReport(report, dateStr2);
+    await saveReport(report, dateStr2, language);
     
     console.log(`========== 日报生成完成 ==========\n`);
     
@@ -157,18 +170,21 @@ app.post('/api/reports/generate', async (req, res) => {
 });
 
 // 保存报告
-async function saveReport(report: any, dateStr: string) {
+async function saveReport(report: any, dateStr: string, language: 'zh' | 'en' = 'zh') {
   const reportsDir = path.join(process.cwd(), 'data', 'reports');
   await fs.mkdir(reportsDir, { recursive: true });
   
+  // 文件名后缀
+  const suffix = language === 'zh' ? '-cn' : '-en';
+  
   // 保存JSON
-  const jsonFile = path.join(reportsDir, `${dateStr}-report.json`);
+  const jsonFile = path.join(reportsDir, `${dateStr}-report${suffix}.json`);
   await fs.writeFile(jsonFile, JSON.stringify(report, null, 2));
   console.log(`[Save] JSON报告已保存: ${jsonFile}`);
   
   // 保存Markdown（简化版）
   const mdContent = generateMarkdownReport(report);
-  const mdFile = path.join(reportsDir, `${dateStr}-report.md`);
+  const mdFile = path.join(reportsDir, `${dateStr}-report${suffix}.md`);
   await fs.writeFile(mdFile, mdContent);
   console.log(`[Save] Markdown报告已保存: ${mdFile}`);
 }

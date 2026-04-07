@@ -17,7 +17,11 @@
 - 🤖 **AI智能分析**：使用GPT-3.5/GPT-4进行信息提取、情感分析、影响评估
 - 📊 **多维度可视化**：图表展示事件分布、情感趋势、热门话题
 - 📝 **专业报告生成**：自动生成包含热点分析、趋势判断的日报
-- 🌐 **中英文切换**：一键切换界面语言，支持简体中文和英文
+- 🌐 **完整双语支持**：
+  - 一键切换中英文界面
+  - 报告内容完全本地化（标题、摘要、分析等全部使用对应语言）
+  - 自动检测浏览器语言
+  - 语言偏好持久化
 
 ### 应用场景
 
@@ -226,6 +230,39 @@ yarn generate-report --date=2026-04-07
 - **JSON数据**：`backend/data/reports/2026-04-07-report.json`
 - **Markdown报告**：`backend/data/reports/2026-04-07-report.md`
 
+### 🌐 使用双语功能
+
+系统支持完整的中英文双语切换：
+
+**切换语言**
+1. 打开Web界面：http://localhost:5174
+2. 点击右上角的语言切换按钮（"EN" 或 "中文"）
+3. 所有内容自动切换为对应语言
+
+**生成不同语言的报告**
+```bash
+# 生成中文报告
+yarn generate-report --lang=zh
+
+# 生成英文报告
+yarn generate-report --lang=en
+```
+
+**API获取不同语言的报告**
+```bash
+# 获取中文报告
+curl "http://localhost:3000/api/reports/latest?lang=zh"
+
+# 获取英文报告
+curl "http://localhost:3000/api/reports/latest?lang=en"
+```
+
+**特性说明**
+- ✅ 报告内容完全本地化（标题、摘要、分析等全部使用对应语言）
+- ✅ 自动检测浏览器语言偏好
+- ✅ 语言选择自动保存
+- ✅ 无需刷新页面即可切换
+
 ---
 
 ## 🤖 AI使用说明
@@ -411,6 +448,10 @@ yarn test:e2e
 
 ### 功能文档
 - [国际化指南](./docs/features/i18n-guide.md)
+
+### 质量报告
+- [标准化报告 - LanguageSwitcher](./docs/normalization-report.md)
+- [Polish 报告 - 最终质量检查](./docs/polish-report.md)
 
 ### 示例文档
 - [示例报告](./docs/examples/sample-report.md)
